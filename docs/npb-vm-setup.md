@@ -1,6 +1,6 @@
 # NetPro NPB VM Setup
 
-> Status: installation, three-port DPDK startup, HTTP classification, and HTTP forwarding verified.
+> Status: installation, three-port DPDK startup, HTTP/TLS classification, forwarding, and enforcement-path delivery verified.
 
 The `NetPro-Network-Packet-Broker` repository is the baseline. It receives traffic on one DPDK port, filters for HTTP GET and TLS Client Hello traffic using Hyperscan, and sends the two traffic classes through separate DPDK output ports.
 
@@ -33,7 +33,9 @@ The NPB successfully:
 - initialized three VMXNET3 data adapters using `uio_pci_generic`;
 - received TRex HTTP traffic on DPDK port 0;
 - classified the traffic as HTTP GET; and
-- forwarded it through DPDK port 1 with zero reported packet drops or errors.
+- forwarded it through DPDK port 1 with zero reported packet drops or errors;
+- classified the repository TLS Client Hello capture; and
+- forwarded TLS traffic through DPDK port 2 to the Policy Server.
 
 ## VMware hardware
 
@@ -211,6 +213,16 @@ An independent kernel/tcpdump test and DPDK `testpmd` test also verified traffic
 
 The application prints `PACKET BORKER`; this is a typo in the repository output, not a different program.
 
+## Verified TLS forwarding
+
+The repository HTTPS test uses `https_583B_single.pcap`, whose TLS SNI is `www.ui.ac.id` and destination is `152.118.24.175:443`. During the verified 1,000-pps test:
+
+- port 0 received the generated frames;
+- `TLS CLIENT HELLO match` reached approximately 1,000 per active interval;
+- port 2 forwarded approximately 1,000 frames to `NetPro-TLS`;
+- the Policy Server received and blocked the matching traffic; and
+- RX/TX/mbuf error counters remained zero.
+
 ## Installation checklist
 
 - [x] Ubuntu 20.04 and SSH
@@ -222,7 +234,7 @@ The application prints `PACKET BORKER`; this is a typo in the repository output,
 - [x] Three-port DPDK startup
 - [x] HTTP classification and forwarding
 - [x] Delivery from NPB HTTP output to Policy Server port 0
-- [ ] TLS classification and forwarding
+- [x] TLS classification and forwarding
 - [ ] Mixed-workload validation
 - [ ] Local boot-preparation service and reboot persistence
 
@@ -253,5 +265,5 @@ The Makefile builds a static binary by default and creates `stats/` and `logs/`.
 | Repository build | Verified |
 | Three-port DPDK startup | Verified |
 | HTTP split | Verified |
-| TLS split | Pending |
+| TLS split | Verified |
 | Reboot persistence | Pending |

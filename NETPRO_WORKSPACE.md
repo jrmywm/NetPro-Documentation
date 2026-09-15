@@ -40,9 +40,9 @@ NetPro Documentation/
 | VM | OS | Management address | NetPro address | Status |
 | --- | --- | --- | --- | --- |
 | `Kafka-Broker-VM` | Ubuntu 24.04 | DHCP: `192.168.31.132` | `192.168.0.90/24` | Verified, automatic boot |
-| `Policy-Server-VM` | Ubuntu 20.04 | DHCP: `192.168.31.131` | `192.168.0.91/24` | Verified, DPDK boot preparation automatic |
-| `NPB-VM` | Ubuntu 20.04 | DHCP: `192.168.31.133` | `192.168.0.92/24` | DPDK and HTTP forwarding verified |
-| `Packet-Generator-VM` | Ubuntu 20.04 | DHCP: `192.168.31.134` | `192.168.0.93/24` | TRex v3.04 and HTTP generation verified |
+| `Policy-Server-VM` | Ubuntu 20.04 | DHCP: `192.168.31.131` | `192.168.0.91/24` | HTTP/TLS policy enforcement and RST output verified |
+| `NPB-VM` | Ubuntu 20.04 | DHCP: `192.168.31.133` | `192.168.0.92/24` | HTTP and TLS classification/forwarding verified |
+| `Packet-Generator-VM` | Ubuntu 20.04 | DHCP: `192.168.31.134` | `192.168.0.93/24` | TRex v3.04 HTTP/TLS generation and RST reception verified |
 
 DHCP addresses can change. The `192.168.0.90`–`192.168.0.93` secondary addresses are the stable NetPro control addresses used by the current lab configuration.
 
@@ -50,7 +50,7 @@ DHCP addresses can change. The `192.168.0.90`–`192.168.0.93` secondary address
 
 | Segment | Connects | Purpose |
 | --- | --- | --- |
-| `NetPro-RX` | Packet Generator → NPB input | Generated traffic entering the NPB |
+| `NetPro-RX` | Packet Generator, NPB input, and Policy RST output | Generated traffic entering the NPB and reset frames returning to TRex |
 | `NetPro-HTTP` | NPB HTTP output → Policy data port 1 | HTTP GET traffic |
 | `NetPro-TLS` | NPB TLS output → Policy data port 2 | TLS Client Hello traffic |
 | `NetPro-PG-AUX` | Packet Generator port 1 only | Unused second TRex port required by the two-port TRex configuration |
@@ -189,21 +189,23 @@ Record the machine-local location and backup status in a private inventory, but 
 
 ## Verified end-to-end result
 
-The HTTP data path has been verified with the repository's `npb_testing_http.py` traffic profile at a 256-byte test size:
+HTTP and TLS policy enforcement have been verified with the repository traffic profiles:
 
 ```text
 TRex port 0 → NetPro-RX → NPB port 0
 NPB HTTP classification → NPB port 1 → NetPro-HTTP → Policy Server port 0
+NPB TLS classification  → NPB port 2 → NetPro-TLS  → Policy Server port 0 (TLS mode)
+Policy Server port 1 → NetPro-RX → TRex port 0
 ```
 
-The NPB received and classified approximately 1,000 HTTP GET packets per reporting interval, forwarded them with zero reported drops/errors, and the Policy Server received approximately 984–999 packets per reporting interval with zero reported errors. This verifies packet delivery and HTTP classification. Policy matching, blocking, and TCP-reset behavior remain separate tests.
+The HTTP test matched `facebook.co.id` at `48.0.0.1`. The TLS test matched SNI `www.ui.ac.id` at `152.118.24.175:443`. In each test, the NPB classified and forwarded approximately 1,000 requests per active interval; the Policy Server blocked matching requests and emitted client- and server-directed RST frames with zero reported interface errors. The TLS run ended with 8,016 TRex transmissions and 16,032 received RST frames.
 
-See [End-to-end HTTP validation](docs/end-to-end-http-validation.md) for the repeatable procedure and interpretation.
+The current unmodified Policy Server polls one input port, so HTTP and TLS use separate DPDK binding modes rather than running simultaneously. See [End-to-end HTTP and TLS validation](docs/end-to-end-http-validation.md) for the repeatable procedure and interpretation.
 
 ## Documentation status
 
 - [Policy Server VM setup](docs/policy-server-vm-setup.md): verified through reboot and Kafka-to-SQLite integration.
 - [Kafka Broker VM setup](docs/kafka-broker-vm-setup.md): verified through reboot.
-- [NPB VM setup](docs/npb-vm-setup.md): verified through DPDK reception and HTTP forwarding.
-- [Packet Generator VM setup](docs/packet-generator-vm-setup.md): verified with TRex v3.04 and the repository HTTP script.
-- [End-to-end HTTP validation](docs/end-to-end-http-validation.md): verified from TRex through NPB to Policy Server.
+- [NPB VM setup](docs/npb-vm-setup.md): verified through HTTP/TLS classification and forwarding.
+- [Packet Generator VM setup](docs/packet-generator-vm-setup.md): verified with the repository HTTP and TLS scripts and RST reception.
+- [End-to-end HTTP and TLS validation](docs/end-to-end-http-validation.md): verified through policy matching, blocking, and TCP-reset return.

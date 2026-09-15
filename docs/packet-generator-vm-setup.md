@@ -1,6 +1,6 @@
 # NetPro Packet Generator VM Setup
 
-> Status: TRex v3.04, VMware/DPDK ports, repository HTTP script, and delivery to the NPB verified.
+> Status: TRex v3.04, VMware/DPDK ports, repository HTTP/TLS scripts, enforcement, and RST return verified.
 
 This guide records the Packet Generator VM built from the `Network-Laboratory-UI/NetPro-Packet-Generator` repository. The repository is kept unchanged. TRex configuration, Python path settings, and VMware details are local to the VM.
 
@@ -12,6 +12,7 @@ This guide records the Packet Generator VM built from the `Network-Laboratory-UI
 - The repository's `npb_testing_http.py` loads successfully.
 - TRex transmitted the 256-byte HTTP test through `NetPro-RX`.
 - The NPB received, classified, and forwarded the traffic to the Policy Server.
+- TRex transmitted the repository's 583-byte TLS capture and received both Policy Server RST directions.
 
 ## VMware hardware and topology
 
@@ -158,6 +159,29 @@ python3 npb_testing_http.py \
 
 During the successful test, TRex port 0 transmitted packets while port 1 remained idle. An earlier run reported 8,012 transmitted packets and 2,051,072 bytes. The exact totals depend on test timing.
 
+## Run the verified TLS test
+
+Keep TRex running in terminal 1. In terminal 2:
+
+```bash
+source ~/.profile
+cd /opt/trex/v3.04/automation/trex_control_plane/interactive/trex/npb_test/npb
+python3 npb_testing_https.py \
+  --sizes 583 \
+  --pps_values 1000 2000 1000
+```
+
+The script transmits only from TRex port 0 and loads the fixed capture `pcap/https_583B_single.pcap`. That capture contains TLS SNI `www.ui.ac.id` for `152.118.24.175:443`. The verified run produced:
+
+```text
+port 0 opackets:  8016
+port 0 ipackets: 16032
+port 0 ierrors:      0
+port 0 oerrors:      0
+```
+
+The two received frames per transmitted request are the client- and server-directed RST frames emitted by the Policy Server onto the shared `NetPro-RX` segment. Port 1 remains unused by both the repository HTTP and HTTPS scripts.
+
 ## Troubleshooting
 
 ### `Port 0 dest MAC is invalid`
@@ -184,7 +208,5 @@ Check, in order:
 
 ## Remaining validation
 
-- Run the repository HTTPS/TLS profile and verify the NPB TLS output and Policy Server port 1.
-- Run the mixed HTTP/HTTPS/UDP cases in `runner.sh` after the individual low-rate tests pass.
+- Run the mixed HTTP/HTTPS/UDP cases in `runner.sh` after accounting for the Policy Server's single-input limitation.
 - Decide which generated JSON, PCAPs, and screenshots should be retained outside Git as test evidence.
-

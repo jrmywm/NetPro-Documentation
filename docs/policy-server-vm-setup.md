@@ -13,7 +13,8 @@ The Policy Server successfully:
 - created the SQLite `policies` table while running;
 - consumed a correctly formatted policy from Kafka at `192.168.0.90:9092`; and
 - reproduced its hugepage and DPDK bindings automatically after a reboot.
-- received HTTP traffic forwarded by the NPB on DPDK port 0 with no reported RX errors.
+- enforced matching HTTP and TLS policies; and
+- generated two TCP-reset directions per blocked request and returned them to TRex with no reported interface errors.
 
 ## Repository baseline and known inconsistencies
 
@@ -39,6 +40,7 @@ For those reasons, this guide runs the repository's commands manually with value
 | Network Adapter | NAT; management and SSH |
 | Network Adapter 2 | LAN segment `NetPro-HTTP`; VMXNET3 |
 | Network Adapter 3 | LAN segment `NetPro-TLS`; VMXNET3 |
+| Network Adapter 4 | LAN segment `NetPro-RX`; VMXNET3; RST output |
 
 All adapters should have **Connect at power on** enabled.
 
@@ -47,6 +49,7 @@ With the VM fully powered off and VMware Workstation closed, the VM's `.vmx` fil
 ```text
 ethernet1.virtualDev = "vmxnet3"
 ethernet2.virtualDev = "vmxnet3"
+ethernet3.virtualDev = "vmxnet3"
 ```
 
 `ethernet0` is the NAT/management adapter and remains E1000.
@@ -57,6 +60,7 @@ ethernet2.virtualDev = "vmxnet3"
 Management: ens33  -> 0000:02:01.0 -> e1000
 Data port 1: ens192 -> 0000:0b:00.0 -> vmxnet3
 Data port 2: ens224 -> 0000:13:00.0 -> vmxnet3
+RST output:  ens256 -> 0000:1b:00.0 -> vmxnet3
 ```
 
 The management adapter must never be bound to DPDK.
@@ -67,6 +71,7 @@ Verify the mapping before binding:
 ip -br addr
 sudo ethtool -i ens192
 sudo ethtool -i ens224
+sudo ethtool -i ens256
 ```
 
 ## SSH and build dependencies
@@ -210,7 +215,7 @@ set -euo pipefail
 
 /usr/local/bin/dpdk-hugepages.py -p 2M --setup 2G
 
-for interface in ens192 ens224; do
+for interface in ens192 ens224 ens256; do
     if /usr/sbin/ip link show "$interface" >/dev/null 2>&1; then
         /usr/sbin/ip link set "$interface" down
     fi
@@ -219,7 +224,7 @@ done
 /usr/local/bin/dpdk-devbind.py \
     -b uio_pci_generic \
     0000:0b:00.0 \
-    0000:13:00.0
+    0000:1b:00.0
 ```
 
 ```bash
@@ -262,7 +267,7 @@ Expected state:
 
 - the service reports `active` (`active (exited)` in the detailed status);
 - 1,024 pages of 2 MB each are mounted, totalling 2 GB;
-- `0000:0b:00.0` and `0000:13:00.0` use `uio_pci_generic`; and
+- `0000:0b:00.0` and `0000:1b:00.0` use `uio_pci_generic` for the default HTTP mode; and
 - `ens33` remains active for SSH.
 
 ## Start the Policy Server
@@ -281,7 +286,7 @@ Expected startup indicators include:
 ```text
 EAL: Detected CPU lcores: 4
 EAL: Probe PCI driver: net_vmxnet3 ... 0000:0b:00.0
-EAL: Probe PCI driver: net_vmxnet3 ... 0000:13:00.0
+EAL: Probe PCI driver: net_vmxnet3 ... 0000:1b:00.0
 ```
 
 The live statistics counters remain zero until another NetPro component sends traffic.
@@ -354,17 +359,18 @@ sudo systemctl restart netpro-dpdk-prepare
 
 Never remove those mappings while a DPDK process is running.
 
-## Verified HTTP packet reception
+## Verified HTTP and TLS enforcement
 
-With TRex generating the repository's HTTP profile and the NPB forwarding HTTP traffic, Policy Server port 0 reported approximately 984–999 received packets per reporting interval at the 256-byte test size. Drops and RX/TX errors remained zero. Port 1 remained idle, as expected for an HTTP-only test.
+In HTTP mode, DPDK port 0 is PCI `0000:0b:00.0` and DPDK port 1 is the RST output at `0000:1b:00.0`. The verified `facebook.co.id` policy produced approximately 1,000 blocked requests, 1,000 client RSTs, and 1,000 server RSTs per active interval.
 
-This proves that the `NetPro-HTTP` LAN segment, VMXNET3/DPDK binding, NPB forwarding, and Policy Server receive path work together. `Packets sent count: 0` means this test did not yet prove policy enforcement or TCP-reset generation.
+In TLS mode, stop the Policy Server, return `0000:0b:00.0` to `vmxnet3`, and bind `0000:13:00.0` plus `0000:1b:00.0` to `uio_pci_generic`. The verified `www.ui.ac.id` policy produced the same match, drop, and two-direction RST behavior. TRex received 16,032 frames in response to 8,016 TLS transmissions.
 
-See [End-to-end HTTP validation](end-to-end-http-validation.md).
+The current source polls only application port 0, so HTTP and TLS inputs cannot run simultaneously without a source change. Do not restart the HTTP-mode preparation service during a manual TLS-mode test because it will restore the HTTP bindings.
+
+See [End-to-end HTTP and TLS validation](end-to-end-http-validation.md).
 
 ## Remaining integration work
 
-- Add a policy that matches the exact generated HTTP host or destination.
-- Verify the corresponding policy match/drop/TCP-reset counters and emitted packets.
-- Run the repository's TLS Client Hello profile and verify Policy Server port 1.
+- Design and review a Policy Server source change for simultaneous HTTP and TLS inputs.
 - Validate mixed HTTP, HTTPS, and UDP workloads.
+- Replace the mode-specific local preparation behavior with an explicit, documented mode selector if repeated switching is required.
