@@ -1,0 +1,44 @@
+# Component repositories are independent checkouts.
+/repos/
+
+# Local-only VM and packet data.
+/vms/
+/captures/
+/datasets/
+/artifacts/
+/secrets/
+*.vmdk
+*.vmx
+*.vmxf
+*.vmsd
+*.vmem
+*.vmsn
+*.vmss
+*.nvram
+*.lck/
+*.iso
+*.ova
+*.ovf
+*.pcap
+*.pcapng
+
+# Secrets and machine-local configuration.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.token
+
+# Generated and transient files.
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+dist/
+build/
+coverage/
+*.log
+.DS_Store
+Thumbs.db
