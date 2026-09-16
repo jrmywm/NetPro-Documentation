@@ -14,7 +14,8 @@ NetPro Documentation/
 │   ├── kafka-broker-vm-setup.md
 │   ├── npb-vm-setup.md
 │   ├── packet-generator-vm-setup.md
-│   └── end-to-end-http-validation.md
+│   ├── end-to-end-http-validation.md
+│   └── backend-vm-setup.md
 └── repos/                         # local-only; ignored by this repository
     ├── NetPro-Policy-Server/
     ├── NetPro-Network-Packet-Broker/
@@ -43,6 +44,7 @@ NetPro Documentation/
 | `Policy-Server-VM` | Ubuntu 20.04 | DHCP: `192.168.31.131` | `192.168.0.91/24` | HTTP/TLS policy enforcement and RST output verified |
 | `NPB-VM` | Ubuntu 20.04 | DHCP: `192.168.31.133` | `192.168.0.92/24` | HTTP and TLS classification/forwarding verified |
 | `Packet-Generator-VM` | Ubuntu 20.04 | DHCP: `192.168.31.134` | `192.168.0.93/24` | TRex v3.04 HTTP/TLS generation and RST reception verified |
+| `Backend-VM` | Ubuntu 24.04 | DHCP: `192.168.31.135` | `192.168.0.94/24` | PostgreSQL, HTTPS API, Kafka, and reboot persistence verified |
 
 DHCP addresses can change. The `192.168.0.90`–`192.168.0.93` secondary addresses are the stable NetPro control addresses used by the current lab configuration.
 
@@ -80,12 +82,15 @@ For packet-path-only testing, the backend and frontend may remain off. Kafka sho
 
 | Setting | Value | Location |
 | --- | --- | --- |
-| Kafka broker | `192.168.0.90:9092` | Hard-coded in Policy Server source; configured in Kafka `server.properties` |
+| Kafka broker | `192.168.0.90:9092` | Hard-coded in Policy Server and Backend source; configured in Kafka `server.properties` |
 | Kafka topic | `dpdk-blocked-list` | Policy source and Kafka repo README |
 | Policy control address | `192.168.0.91/24` | Policy VM netplan overlay |
 | NPB control address | `192.168.0.92/24` | NPB VM netplan overlay |
 | Packet Generator control address | `192.168.0.93/24` | Packet Generator VM netplan overlay |
+| Backend control address | `192.168.0.94/24` | Backend VM netplan overlay |
 | Policy SQLite path | `/home/ubuntu/NetPro-Policy-Server/policy.db` | Hard-coded in Policy Server source |
+| Backend PostgreSQL | `test` on `localhost:5432` | Hard-coded in Backend source; isolated lab only |
+| Backend HTTPS URL | `https://192.168.0.94:3000` | Port supplied by systemd; self-signed lab certificate |
 | Frontend development URL | `http://localhost:3005` | Frontend README |
 | Backend development URL | `http://localhost:3000` | Backend README; repository also contains local SSL behavior |
 | Frontend certificate paths | `/home/ubuntu/cert/server.crt`, `/home/ubuntu/cert/server.key` | Frontend `package.json` |
@@ -202,6 +207,15 @@ The HTTP test matched `facebook.co.id` at `48.0.0.1`. The TLS test matched SNI `
 
 The current unmodified Policy Server polls one input port, so HTTP and TLS use separate DPDK binding modes rather than running simultaneously. See [End-to-end HTTP and TLS validation](docs/end-to-end-http-validation.md) for the repeatable procedure and interpretation.
 
+The application control path is also verified:
+
+```text
+Backend HTTPS API -> PostgreSQL -> Kafka dpdk-blocked-list
+                  -> Policy Server consumer -> SQLite policies
+```
+
+A blocked-list record created through `POST /ps/blocked-list` persisted across Backend reboot and appeared in the Policy Server database with the same UUID, domain, and IP. See [Backend VM setup](docs/backend-vm-setup.md).
+
 ## Documentation status
 
 - [Policy Server VM setup](docs/policy-server-vm-setup.md): verified through reboot and Kafka-to-SQLite integration.
@@ -209,3 +223,4 @@ The current unmodified Policy Server polls one input port, so HTTP and TLS use s
 - [NPB VM setup](docs/npb-vm-setup.md): verified through HTTP/TLS classification and forwarding.
 - [Packet Generator VM setup](docs/packet-generator-vm-setup.md): verified with the repository HTTP and TLS scripts and RST reception.
 - [End-to-end HTTP and TLS validation](docs/end-to-end-http-validation.md): verified through policy matching, blocking, and TCP-reset return.
+- [Backend VM setup](docs/backend-vm-setup.md): verified through reboot and Backend-to-Policy database synchronization.
