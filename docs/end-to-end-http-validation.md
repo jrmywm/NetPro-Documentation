@@ -179,6 +179,8 @@ The 2:1 receive/transmit ratio at TRex is expected in this lab topology: the Pol
 
 Counters returning to zero after the run represent idle one-second intervals, not failure. Use the nonzero active intervals and final cumulative TRex counters as evidence.
 
+The post-reboot repeat on 17 September 2026 produced the same behavior: NPB matched and forwarded 1,004 TLS Client Hello packets through port 2, Policy produced stable 1,000-request intervals with 2,000 RST transmissions, and TRex finished with 8,017 transmitted packets and 16,034 received frames. All three components again reported zero interface errors.
+
 ## What is proven
 
 - TRex can transmit the repository's HTTP and TLS profiles.

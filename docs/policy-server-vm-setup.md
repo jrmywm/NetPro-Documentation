@@ -408,6 +408,27 @@ netpro-test-001|example.com|93.184.216.34
 
 The consumer always starts at the beginning of partition 0. Non-JSON test text produces a logged JSON parsing error but does not crash the process. Keep the production topic free of arbitrary plaintext messages.
 
+## Runtime Backend configuration and certificate trust
+
+The dashboard-generated Policy Server ID is `6f7e663a-dfae-4b31-9e4e-93bc64d3e0a1`. A VM-local runtime copy of `config/config.cfg` uses:
+
+```text
+HOSTNAME= https://192.168.0.94:3000
+```
+
+Back up the repository default outside the repository before installing the generated configuration. Do not commit the generated ID or VM-specific URL.
+
+Install the Backend public certificate so libcurl can validate its self-signed lab certificate:
+
+```bash
+sudo cp ~/netpro-backend.crt \
+  /usr/local/share/ca-certificates/netpro-backend.crt
+sudo update-ca-certificates
+curl -i https://192.168.0.94:3000/ps/blocked-list
+```
+
+Never copy the Backend private key to this VM. Once the runtime configuration and trust were installed, Policy heartbeats appeared in PostgreSQL every five seconds and the dashboard could mark the device Active.
+
 ## Troubleshooting
 
 ### `Cannot get hugepage information`
@@ -449,4 +470,3 @@ See [End-to-end HTTP and TLS validation](end-to-end-http-validation.md).
 
 - Design and review a Policy Server source change for simultaneous HTTP and TLS inputs.
 - Validate mixed HTTP, HTTPS, and UDP workloads.
-- Replace the mode-specific local preparation behavior with an explicit, documented mode selector if repeated switching is required.

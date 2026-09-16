@@ -1,6 +1,6 @@
 # NetPro NPB VM Setup
 
-> Status: installation, three-port DPDK startup, HTTP/TLS classification, forwarding, and enforcement-path delivery verified.
+> Status: installation, three-port DPDK startup, HTTP/TLS classification, forwarding, enforcement-path delivery, automatic startup, and reboot persistence verified.
 
 The `NetPro-Network-Packet-Broker` repository is the baseline. It receives traffic on one DPDK port, filters for HTTP GET and TLS Client Hello traffic using Hyperscan, and sends the two traffic classes through separate DPDK output ports.
 
@@ -199,6 +199,39 @@ sudo ./build/packetBroker -l 0-3 -n 2
 
 Using these VM-specific EAL arguments does not change the repository. Successful startup displays statistics for ports 0, 1, and 2.
 
+## Automatic DPDK preparation and application startup
+
+The verified VM uses `/usr/local/sbin/netpro-npb-dpdk-prepare.sh` to restore the volatile DPDK runtime state after boot. The script:
+
+- refuses to continue while `packetBroker` or `dpdk-testpmd` is running;
+- loads `uio` and `uio_pci_generic`;
+- removes stale `rtemap_*` files;
+- allocates 1,024 2 MB hugepages;
+- brings `ens192`, `ens224`, and `ens256` down when present; and
+- binds `0000:0b:00.0`, `0000:13:00.0`, and `0000:1b:00.0` to `uio_pci_generic`.
+
+It is invoked by the enabled oneshot service `netpro-npb-dpdk-prepare.service`. The enabled `netpro-npb.service` requires that preparation service and runs:
+
+```text
+/home/netpro/NetPro-Network-Packet-Broker/build/packetBroker -l 0-3 -n 2
+```
+
+Verify both services and the runtime state:
+
+```bash
+systemctl is-enabled netpro-npb-dpdk-prepare netpro-npb
+systemctl is-active netpro-npb-dpdk-prepare netpro-npb
+sudo dpdk-hugepages.py -s
+sudo dpdk-devbind.py -s
+sudo journalctl -u netpro-npb -n 30 --no-pager
+```
+
+After reboot, the stable `192.168.0.92/24` address returned, both services reported enabled and active, 1,024 2 MB hugepages were available, all three VMXNET3 data adapters used `uio_pci_generic`, and the NPB journal displayed statistics for ports 0, 1, and 2. This verifies complete reboot persistence.
+
+A post-reboot HTTP enforcement retest also succeeded. The captured NPB journal showed a peak of 3,000 received packets on port 0 across the test sequence, 1,000 HTTP GET matches in an active reporting interval, 1,000 packets sent through HTTP output port 1, an idle TLS port 2, and zero RX/TX/mbuf errors. The Policy Server simultaneously received and blocked 1,000 requests and emitted 2,000 RST packets.
+
+The post-reboot TLS enforcement retest succeeded as well. NPB recorded 1,004 TLS Client Hello matches and forwarded 1,004 packets through TLS output port 2 while HTTP port 1 remained idle. Policy repeatedly showed stable active intervals of 1,000 received and blocked packets, 1,000 client RSTs, 1,000 server RSTs, and 2,000 transmissions with zero interface errors. TRex transmitted 8,017 packets and received 16,034 RST frames, preserving the expected 2:1 ratio.
+
 ## Verified HTTP forwarding
 
 With the Packet Generator transmitting a 256-byte HTTP profile at approximately 1,000 packets per reporting interval:
@@ -235,8 +268,9 @@ The repository HTTPS test uses `https_583B_single.pcap`, whose TLS SNI is `www.u
 - [x] HTTP classification and forwarding
 - [x] Delivery from NPB HTTP output to Policy Server port 0
 - [x] TLS classification and forwarding
+- [x] Local boot-preparation and NPB application services
 - [ ] Mixed-workload validation
-- [ ] Local boot-preparation service and reboot persistence
+- [x] Full reboot persistence after both services were installed
 
 ## Expected build dependencies
 
@@ -249,9 +283,26 @@ pkg-config --modversion libhs
 
 The Makefile builds a static binary by default and creates `stats/` and `logs/`. Generated binaries, logs, and statistics stay local and must not be committed.
 
-## Repository configuration to review before live testing
+## Runtime Backend configuration and certificate trust
 
-`config/config.cfg` currently contains repository defaults including IDs and `HOSTNAME=https://netprobanget.id`. Do not replace or commit these values during VM installation. We will determine whether local backend integration requires a machine-local configuration override after the binary builds successfully.
+The dashboard-generated NPB ID is `79c57972-db3b-409e-b4e8-ab4ee526f666`. A VM-local runtime copy of `config/config.cfg` uses:
+
+```text
+HOSTNAME= https://192.168.0.94:3000
+```
+
+Back up the repository default outside the repository before installing this generated configuration. Do not commit the generated IDs or VM-specific URL.
+
+Because the Backend uses a self-signed lab certificate, install its public certificate on the NPB VM:
+
+```bash
+sudo cp ~/netpro-backend.crt \
+  /usr/local/share/ca-certificates/netpro-backend.crt
+sudo update-ca-certificates
+curl -i https://192.168.0.94:3000/npb/npbs
+```
+
+Never copy the Backend private key to this VM.
 
 ## Validation record
 
@@ -266,4 +317,6 @@ The Makefile builds a static binary by default and creates `stats/` and `logs/`.
 | Three-port DPDK startup | Verified |
 | HTTP split | Verified |
 | TLS split | Verified |
-| Reboot persistence | Pending |
+| DPDK preparation service | Verified |
+| NPB application service | Verified |
+| Full reboot persistence | Verified |

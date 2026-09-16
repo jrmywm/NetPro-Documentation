@@ -333,6 +333,24 @@ Backend REST API -> PostgreSQL -> Kafka dpdk-blocked-list
                  -> Policy Server consumer -> SQLite policies
 ```
 
+## Enable dashboard heartbeat status evaluation
+
+Policy and NPB processes send heartbeats that are stored in `ps_heartbeat` and `npb_heartbeat`. The repository already contains a 15-second cron block in `src/app.js` that calls both heartbeat-check controllers, but that block was commented out in the verified checkout.
+
+For the current VM, the existing block was enabled locally, checked with `node --check src/app.js`, and `netpro-backend` was restarted. This changed both registered dashboard cards from **Inactive** to **Active** while their native processes were running.
+
+This is a local, uncommitted component-repository deviation. Review it as a separate source change before pushing it upstream.
+
+## Distribute the Backend public certificate
+
+Policy Server and NPB use libcurl and therefore reject the Backend's self-signed certificate until its public certificate is trusted. Copy only `server.crt` to each VM and install it as:
+
+```text
+/usr/local/share/ca-certificates/netpro-backend.crt
+```
+
+Then run `sudo update-ca-certificates` and verify the API with `curl` without `-k`. Never distribute `/home/ubuntu/cert/server.key`.
+
 ## Reboot verification
 
 After reboot:
