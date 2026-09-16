@@ -270,6 +270,82 @@ Expected state:
 - `0000:0b:00.0` and `0000:1b:00.0` use `uio_pci_generic` for the default HTTP mode; and
 - `ens33` remains active for SSH.
 
+## Switch safely between HTTP and TLS modes
+
+The current Policy Server reads only DPDK application port 0 and uses application port 1 for RST output. Create this VM-local helper so the inspected input can be switched without editing the repository:
+
+```bash
+sudo nano /usr/local/sbin/netpro-policy-mode
+```
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+HTTP_PCI="0000:0b:00.0"
+TLS_PCI="0000:13:00.0"
+RST_PCI="0000:1b:00.0"
+
+if pgrep -f '/build/policyServer' >/dev/null; then
+    echo "ERROR: Stop the Policy Server before changing DPDK bindings."
+    exit 1
+fi
+
+if [[ $# -ne 1 ]]; then
+    echo "Usage: sudo netpro-policy-mode {http|tls|status}"
+    exit 1
+fi
+
+if [[ "$1" == "status" ]]; then
+    /usr/local/bin/dpdk-devbind.py -s
+    exit 0
+fi
+
+/usr/sbin/modprobe uio
+/usr/sbin/modprobe uio_pci_generic
+
+case "$1" in
+    http)
+        /usr/local/bin/dpdk-devbind.py -b vmxnet3 "$TLS_PCI"
+        /usr/sbin/ip link set ens224 down 2>/dev/null || true
+        /usr/sbin/ip link set ens192 down 2>/dev/null || true
+        /usr/sbin/ip link set ens256 down 2>/dev/null || true
+        /usr/local/bin/dpdk-devbind.py -b uio_pci_generic "$HTTP_PCI" "$RST_PCI"
+        echo "HTTP mode ready: port 0 = HTTP, port 1 = RST"
+        ;;
+    tls)
+        /usr/local/bin/dpdk-devbind.py -b vmxnet3 "$HTTP_PCI"
+        /usr/sbin/ip link set ens192 down 2>/dev/null || true
+        /usr/sbin/ip link set ens224 down 2>/dev/null || true
+        /usr/sbin/ip link set ens256 down 2>/dev/null || true
+        /usr/local/bin/dpdk-devbind.py -b uio_pci_generic "$TLS_PCI" "$RST_PCI"
+        echo "TLS mode ready: port 0 = TLS, port 1 = RST"
+        ;;
+    *)
+        echo "Usage: sudo netpro-policy-mode {http|tls|status}"
+        exit 1
+        ;;
+esac
+
+/usr/local/bin/dpdk-devbind.py -s
+```
+
+```bash
+sudo chmod 755 /usr/local/sbin/netpro-policy-mode
+```
+
+Usage:
+
+```bash
+sudo netpro-policy-mode http
+sudo netpro-policy-mode tls
+sudo netpro-policy-mode status
+```
+
+The helper refuses to change bindings while the Policy Server is running. It was verified in both directions: HTTP mode binds `0000:0b:00.0` plus `0000:1b:00.0`; TLS mode binds `0000:13:00.0` plus `0000:1b:00.0`. Notices that a device is already using the requested driver are harmless.
+
+The selection is not persistent across reboot. The existing `netpro-dpdk-prepare` service intentionally restores HTTP mode at boot.
+
 ## Start the Policy Server
 
 Run from the repository root so relative configuration paths resolve correctly:

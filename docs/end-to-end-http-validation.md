@@ -28,6 +28,16 @@ The same PCI address can appear in different VMs because PCI addresses are local
 
 Only change bindings while the Policy Server is stopped.
 
+If the verified local helper from the Policy Server setup guide is installed, use:
+
+```bash
+sudo netpro-policy-mode http
+sudo netpro-policy-mode tls
+sudo netpro-policy-mode status
+```
+
+The detailed commands below are the manual equivalent and remain useful for recovery.
+
 ### HTTP mode
 
 ```bash
