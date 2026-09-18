@@ -1,6 +1,6 @@
 # NetPro End-to-End HTTP and TLS Validation
 
-> Result: HTTP and TLS policy enforcement verified on 15 September 2026 from TRex through the NPB and Policy Server, including TCP-reset delivery back to TRex.
+> Result: HTTP and TLS policy enforcement verified on 15 September 2026 from TRex through the NPB and Policy Server, including TCP-reset delivery back to TRex. The complete six-VM stack was subsequently power-cycled from a clean powered-off state and revalidated on 19 September 2026.
 
 This procedure uses the verified local Policy telemetry fix `d658fa2` plus VM-local services. The Policy runtime accepts exactly two DPDK ports: the selected input and the RST/output port. HTTP and TLS are therefore validated as separate selectable modes by changing which input adapter is bound to DPDK. The second DPDK port remains the RST output in both modes.
 
@@ -206,6 +206,23 @@ The 2:1 receive/transmit ratio at TRex is expected in this lab topology: the Pol
 Counters returning to zero after the run represent idle one-second intervals, not failure. Use the nonzero active intervals and final cumulative TRex counters as evidence.
 
 The post-reboot repeat on 17 September 2026 produced the same behavior: NPB matched and forwarded 1,004 TLS Client Hello packets through port 2, Policy produced stable 1,000-request intervals with 2,000 RST transmissions, and TRex finished with 8,017 transmitted packets and 16,034 received frames. All three components again reported zero interface errors.
+
+## Powered-off cold-start acceptance test
+
+On 19 September 2026, all six VMs were powered off cleanly and then restarted using the documented dependency order. The following acceptance checks passed after the cold boot:
+
+- Kafka and ZooKeeper were active, with ports `2181` and `9092` listening.
+- Backend and PostgreSQL were active. `HTTPS /ps/blocked-list` returned `200`, and previously persisted blocked-list data was present.
+- Frontend was active on port `3005`; login worked and the dashboard showed both NPB and Policy as **Active**.
+- NPB preparation and service were active with 2 GB hugepages and DPDK PCI devices `0b:00.0`, `13:00.0`, and `1b:00.0`.
+- Policy preparation and service were active with 2 GB hugepages. Boot-safe HTTP mode used DPDK `0b:00.0` + `1b:00.0`, with the kernel-managed device at `13:00.0`.
+- TRex was started manually and its RPC ports `4500` and `4501` were listening.
+
+The HTTP acceptance run used `npb_testing_http.py` with size `256` at `1,000` packets per second. NPB reported approximately 3,000 input packets, 1,000 HTTP matches/forwarded packets, and 2,000 no-match packets. Policy reported approximately 1,000 HTTP input packets, zero TLS input, approximately 1,000 client RSTs and 1,000 server RSTs, output RX/TX near 1,000/2,000, and nonzero HTTP/output throughput. The HTTP test passed.
+
+Policy was then switched safely to TLS mode. The TLS acceptance run used `npb_testing_https.py` with size `583` at `1,000` packets per second. NPB reported zero HTTP, approximately 1,000 HTTPS matches, approximately 2,000 no-match packets, and approximately 1,000 TLS-forwarded packets. Policy reported zero HTTP, approximately 1,000 TLS input packets, approximately 1,000 client RSTs and 1,000 server RSTs, output RX/TX near 1,000/2,000, and nonzero TLS/output throughput. The TLS test passed.
+
+Policy was restored to boot-safe HTTP mode and its service was confirmed active with DPDK `0b:00.0` + `1b:00.0` and kernel-managed `13:00.0`. One- or two-packet differences are normal packet-sampling variation. Snapshots are being created after this consistent powered-off state; snapshot completion is not part of this acceptance result.
 
 ## Full blocked-list CRUD propagation
 

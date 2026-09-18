@@ -224,13 +224,19 @@ A blocked-list record created through `POST /ps/blocked-list` persisted across B
 
 The Frontend HTTPS dashboard was verified from the Windows host. Registration and login worked, paired NPB and Policy Server records were created, the generated runtime configuration reached both native services, and both cards changed to **Active** after their heartbeats were evaluated. The Frontend and NPB services also start automatically. See [Frontend VM setup](docs/frontend-vm-setup.md).
 
+## Powered-off cold-start acceptance
+
+On 19 September 2026, all six VMs were powered off cleanly and restarted. Kafka/ZooKeeper were active on ports `2181`/`9092`; Backend/PostgreSQL were active and `HTTPS /ps/blocked-list` returned `200` with persisted data; and Frontend was active on port `3005`, with login working and NPB and Policy shown as **Active** on the dashboard. NPB preparation/service was active with 2 GB hugepages and DPDK PCI `0b:00.0`, `13:00.0`, and `1b:00.0`. Policy preparation/service was active with 2 GB hugepages, boot-safe HTTP bindings `0b:00.0` + `1b:00.0`, and kernel-managed `13:00.0`. TRex was manually started with ports `4500`/`4501` listening.
+
+The cold-start HTTP run (`npb_testing_http.py`, size `256`, 1,000 pps) passed with approximately 3,000 NPB input packets, 1,000 HTTP matches/forwarded packets, 2,000 no-match packets, approximately 1,000 Policy HTTP input packets, 1,000 client and 1,000 server RSTs, output RX/TX near 1,000/2,000, and nonzero HTTP/output throughput. The TLS run (`npb_testing_https.py`, size `583`, 1,000 pps) passed after safely switching Policy to TLS mode: NPB reported approximately 1,000 HTTPS matches and TLS-forwarded packets, and Policy reported approximately 1,000 TLS input packets, 1,000 client and 1,000 server RSTs, output RX/TX near 1,000/2,000, and nonzero TLS/output throughput. Policy was restored to boot-safe HTTP mode and confirmed active. One- or two-packet differences are normal sampling variation. Snapshots are being created after this consistent powered-off state and are not yet claimed complete.
+
 ## Documentation status
 
 - [Policy Server VM setup](docs/policy-server-vm-setup.md): verified through reboot and Kafka-to-SQLite integration.
 - [Kafka Broker VM setup](docs/kafka-broker-vm-setup.md): verified through reboot.
 - [NPB VM setup](docs/npb-vm-setup.md): verified through HTTP/TLS forwarding, automatic startup, and reboot persistence.
 - [Packet Generator VM setup](docs/packet-generator-vm-setup.md): verified with the repository HTTP and TLS scripts and RST reception.
-- [End-to-end HTTP and TLS validation](docs/end-to-end-http-validation.md): verified through policy matching, blocking, and TCP-reset return.
+- [End-to-end HTTP and TLS validation](docs/end-to-end-http-validation.md): verified through policy matching, blocking, TCP-reset return, and a complete powered-off cold-start acceptance test.
 - [Backend VM setup](docs/backend-vm-setup.md): verified through reboot and Backend-to-Policy database synchronization.
 - [Frontend VM setup](docs/frontend-vm-setup.md): verified through reboot, authentication, device pairing, and active dashboard status.
 - [Setup obstacles and fixes](docs/setup-obstacles-and-fixes.md): consolidated record of encountered failures, causes, resolutions, and pending checks.
