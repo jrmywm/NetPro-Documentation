@@ -143,8 +143,13 @@ python3 npb_testing_http.py --help
 Terminal 1:
 
 ```bash
-cd /opt/trex/v3.04
-sudo ./t-rex-64 -i
+sudo /usr/local/sbin/netpro-trex-start
+```
+
+The VM-local `/usr/local/sbin/netpro-trex-start` helper starts `/opt/trex/v3.04/t-rex-64 -i` with `/etc/trex_cfg.yaml` and keeps TRex in the foreground. Keep this terminal open. Verify the RPC listeners before running a generator:
+
+```bash
+sudo ss -ltnp | grep -E ':(4500|4501)'
 ```
 
 Wait until TRex reports that its ports are ready. Terminal 2:
@@ -194,7 +199,11 @@ Confirm the two compatibility links and `PYTHONPATH` shown above. Do not modify 
 
 ### `ModuleNotFoundError: No module named 'scapy'` mentions local `http.py`
 
-This can be a secondary error caused by Python importing the repository's `http.py` while handling the original path failure. Fix `stl_path.py` resolution first and retest with `--help`.
+This can be a secondary error caused by Ubuntu's apport crash hook importing the repository's local `http.py` and shadowing Python's standard-library `http` module while handling an earlier RPC failure. Fix the TRex/STL path or server-start problem first and retest with `--help`; it is not evidence that the HTTPS PCAP was loaded for the wrong protocol.
+
+### TRex RPC failure on port 4500/4501
+
+The earlier RPC failure was simply TRex not running. Start the helper above, wait for both listeners, and rerun the generator. Do not change the PCAP or add Scapy as a workaround.
 
 ### TRex transmits but the NPB reports zero packets
 

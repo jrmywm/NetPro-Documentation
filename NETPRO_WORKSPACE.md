@@ -1,6 +1,6 @@
 # NetPro Workspace
 
-This repository is the shared documentation and operating record for the NetPro project. The six component repositories remain independent Git repositories under a local `repos/` folder. VM disks, packet captures, secrets, dependencies, and generated data stay outside Git.
+This repository is the shared documentation and operating record for the NetPro project. The six component repositories remain independent Git repositories under a local `repos/` folder. VM disks, packet captures, secrets, dependencies, and generated data stay outside Git. The documented rebuild keeps Adapter 1 on VMware NAT during installation and validation; bridged/external access is optional only after the isolated lab is healthy.
 
 ## Workspace layout
 
@@ -47,17 +47,17 @@ NetPro Documentation/
 | `NPB-VM` | Ubuntu 20.04 | DHCP: `192.168.31.133` | `192.168.0.92/24` | HTTP/TLS forwarding and automatic reboot recovery verified |
 | `Packet-Generator-VM` | Ubuntu 20.04 | DHCP: `192.168.31.134` | `192.168.0.93/24` | TRex v3.04 HTTP/TLS generation and RST reception verified |
 | `Backend-VM` | Ubuntu 24.04 | DHCP: `192.168.31.135` | `192.168.0.94/24` | PostgreSQL, HTTPS API, Kafka, and reboot persistence verified |
-| `Frontend-VM` | Ubuntu 24.04 | DHCP: `192.168.31.136` | `192.168.0.95/24` | HTTPS dashboard, login, systemd startup, and reboot persistence verified |
+| `Frontend-VM` | Ubuntu 24.04 | DHCP/NAT: `192.168.31.136` | `192.168.0.95/24` | HTTPS dashboard, login, systemd startup, and reboot persistence verified |
 
-DHCP addresses can change. The `192.168.0.90`–`192.168.0.95` secondary addresses are the stable NetPro control addresses used by the current lab configuration. Browser-facing URLs use the VMware NAT addresses because the Windows host does not route the VM-only `192.168.0.0/24` control network.
+DHCP/NAT addresses can change. The `192.168.0.90`–`192.168.0.95` secondary addresses are the stable NetPro control addresses used by the current lab configuration. Browser-facing URLs use the VMware NAT addresses because the Windows host does not route the VM-only `192.168.0.0/24` control network. Do not replace Adapter 1 with a bridged adapter during the build; external access can be added later as a separately tested phase.
 
 ## VMware LAN segments
 
 | Segment | Connects | Purpose |
 | --- | --- | --- |
 | `NetPro-RX` | Packet Generator, NPB input, and Policy RST output | Generated traffic entering the NPB and reset frames returning to TRex |
-| `NetPro-HTTP` | NPB HTTP output → Policy data port 1 | HTTP GET traffic |
-| `NetPro-TLS` | NPB TLS output → Policy data port 2 | TLS Client Hello traffic |
+| `NetPro-HTTP` | NPB HTTP output → Policy HTTP NIC (`0b:00.0`) | HTTP GET traffic; this NIC becomes Policy DPDK port 0 in HTTP mode |
+| `NetPro-TLS` | NPB TLS output → Policy TLS NIC (`13:00.0`) | TLS Client Hello traffic; this NIC becomes Policy DPDK port 0 in TLS mode |
 | `NetPro-PG-AUX` | Packet Generator port 1 only | Unused second TRex port required by the two-port TRex configuration |
 
 The management adapter on every VM uses VMware NAT and must not be bound to DPDK.
@@ -75,7 +75,7 @@ Recommended full-lab startup order:
 1. Start `Kafka-Broker-VM`; its ZooKeeper and Kafka services start automatically.
 2. Start `Backend-VM`; PostgreSQL and `netpro-backend` start automatically.
 3. Start `Frontend-VM`; `netpro-frontend` starts automatically.
-4. Start `Policy-Server-VM`; verify its DPDK preparation service, then launch the Policy Server manually.
+4. Start `Policy-Server-VM`; `netpro-dpdk-prepare` restores the default HTTP bindings and `netpro-policy` starts the Policy application automatically. Stop the unit before selecting TLS mode.
 5. Start `NPB-VM`; `netpro-npb-dpdk-prepare` and `netpro-npb` prepare the three DPDK ports and launch the NPB automatically.
 6. Start the Packet Generator last so packets are not sent before consumers are ready.
 
@@ -93,6 +93,8 @@ For packet-path-only testing, the backend and frontend may remain off. Kafka sho
 | Backend control address | `192.168.0.94/24` | Backend VM netplan overlay |
 | Frontend control address | `192.168.0.95/24` | Frontend VM netplan overlay |
 | Policy SQLite path | `/home/ubuntu/NetPro-Policy-Server/policy.db` | Hard-coded in Policy Server source |
+| Policy default mode | `HTTP` | `/etc/default/netpro-policy`; boot preparation binds `0b:00.0` and `1b:00.0` |
+| Policy DPDK layout | Exactly two ports: selected input + RST/output | HTTP: `0b:00.0` + `1b:00.0`; TLS: `13:00.0` + `1b:00.0` |
 | Backend PostgreSQL | `test` on `localhost:5432` | Hard-coded in Backend source; isolated lab only |
 | Backend HTTPS URL | `https://192.168.0.94:3000` | Port supplied by systemd; self-signed lab certificate |
 | Frontend browser URL | `https://192.168.31.136:3005` | Verified VMware NAT address; self-signed lab certificate |
@@ -209,7 +211,7 @@ Policy Server port 1 → NetPro-RX → TRex port 0
 
 The HTTP test matched `facebook.co.id` at `48.0.0.1`. The TLS test matched SNI `www.ui.ac.id` at `152.118.24.175:443`. In each test, the NPB classified and forwarded approximately 1,000 requests per active interval; the Policy Server blocked matching requests and emitted client- and server-directed RST frames with zero reported interface errors. The TLS run ended with 8,016 TRex transmissions and 16,032 received RST frames.
 
-The current unmodified Policy Server polls one input port, so HTTP and TLS use separate DPDK binding modes rather than running simultaneously. See [End-to-end HTTP and TLS validation](docs/end-to-end-http-validation.md) for the repeatable procedure and interpretation.
+The Policy runtime accepts exactly two DPDK ports despite its misleading “number of ports must be 3” error string. It supports selectable HTTP and TLS input modes, with the other DPDK port always used for RST/output. The local Policy source fix `d658fa2` maps telemetry to the selected mode; see [Policy Server VM setup](docs/policy-server-vm-setup.md) and [End-to-end HTTP and TLS validation](docs/end-to-end-http-validation.md).
 
 The application control path is also verified:
 
@@ -232,3 +234,7 @@ The Frontend HTTPS dashboard was verified from the Windows host. Registration an
 - [Backend VM setup](docs/backend-vm-setup.md): verified through reboot and Backend-to-Policy database synchronization.
 - [Frontend VM setup](docs/frontend-vm-setup.md): verified through reboot, authentication, device pairing, and active dashboard status.
 - [Setup obstacles and fixes](docs/setup-obstacles-and-fixes.md): consolidated record of encountered failures, causes, resolutions, and pending checks.
+
+## Local source and runtime boundary
+
+The lab record includes two machine-local source changes: Policy commit `d658fa2 Fix two-port policy telemetry mapping` and Backend commit `bd3c3fc Enable device heartbeat status checks`. They are evidence for the verified lab state, not instructions to push to any Network-Laboratory repository. Keep the following out of Git: `/etc/systemd/system` units, `/etc/default/netpro-policy`, `/usr/local/sbin` helpers, generated configs, certificates and private keys, SQLite/PostgreSQL/Kafka data, logs, compiled binaries, packet captures, and `*.before-*` backups.

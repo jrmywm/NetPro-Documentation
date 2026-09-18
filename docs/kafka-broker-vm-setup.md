@@ -85,6 +85,17 @@ advertised.listeners=PLAINTEXT://192.168.0.90:9092
 zookeeper.connect=localhost:2181
 ```
 
+Keep the shared topic from being removed by the Backend shutdown handler:
+
+```bash
+grep -q '^delete.topic.enable=' config/server.properties \
+  && sed -i 's/^delete.topic.enable=.*/delete.topic.enable=false/' config/server.properties \
+  || printf '\ndelete.topic.enable=false\n' >> config/server.properties
+grep '^delete.topic.enable=' config/server.properties
+```
+
+Expected: `delete.topic.enable=false`. Restart Kafka after changing this setting. It does not restore messages already lost from a `/tmp` data directory, so configure persistent storage before the first reboot.
+
 `PLAINTEXT` is appropriate only for this isolated lab network. Do not expose port 9092 to an untrusted network.
 
 ## Use permanent Kafka and ZooKeeper storage

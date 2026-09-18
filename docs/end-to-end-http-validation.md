@@ -2,7 +2,7 @@
 
 > Result: HTTP and TLS policy enforcement verified on 15 September 2026 from TRex through the NPB and Policy Server, including TCP-reset delivery back to TRex.
 
-This procedure uses the component repositories unchanged. Because the current Policy Server source reads only DPDK port 0 and requires exactly two DPDK ports, HTTP and TLS are validated as separate modes by changing which Policy Server input adapter is bound to DPDK. The second DPDK port remains the RST output in both modes.
+This procedure uses the verified local Policy telemetry fix `d658fa2` plus VM-local services. The Policy runtime accepts exactly two DPDK ports: the selected input and the RST/output port. HTTP and TLS are therefore validated as separate selectable modes by changing which input adapter is bound to DPDK. The second DPDK port remains the RST output in both modes.
 
 ## Verified topology
 
@@ -26,7 +26,7 @@ The same PCI address can appear in different VMs because PCI addresses are local
 
 ## Policy Server modes
 
-Only change bindings while the Policy Server is stopped.
+Only change bindings while the Policy Server is stopped. The systemd service must be stopped, not just a child process, because it restarts on failure.
 
 If the verified local helper from the Policy Server setup guide is installed, use:
 
@@ -69,10 +69,11 @@ In both modes, DPDK enumerates the selected classifier input as application port
 ## Startup order
 
 1. Start ZooKeeper and Kafka and confirm ports 2181 and 9092.
-2. Start the Policy Server in the desired HTTP or TLS mode.
-3. Start the NPB with all three data adapters bound to DPDK.
-4. Start the TRex server.
-5. Run the matching repository traffic-generator script.
+2. Start the Backend/PostgreSQL and Frontend if dashboard/database telemetry is in scope.
+3. Start the Policy Server in the desired HTTP or TLS mode; boot-safe HTTP is the default.
+4. Start the NPB with all three data adapters bound to DPDK.
+5. Start TRex with `/usr/local/sbin/netpro-trex-start` and confirm its RPC listeners on 4500/4501.
+6. Run the matching repository traffic-generator script.
 
 ### Kafka checks
 
@@ -85,10 +86,11 @@ sudo ss -ltnp | grep -E ':(2181|9092)'
 ### Policy Server
 
 ```bash
+sudo systemctl is-active netpro-dpdk-prepare
+sudo systemctl is-active netpro-policy
+sudo netpro-policy-mode status
 sudo dpdk-hugepages.py -s
 sudo dpdk-devbind.py -s
-cd ~/NetPro-Policy-Server
-sudo ./build/policyServer -l 0-3 -n 2
 ```
 
 ### NPB
@@ -103,9 +105,10 @@ sudo ./build/packetBroker -l 0-3 -n 2
 ### TRex server
 
 ```bash
-cd /opt/trex/v3.04
-sudo ./t-rex-64 -i
+sudo /usr/local/sbin/netpro-trex-start
 ```
+
+The helper runs TRex in the foreground with `/etc/trex_cfg.yaml`; keep that terminal open. A generator RPC error when ports 4500/4501 are not listening means TRex is not running yet, not that the HTTPS PCAP is malformed.
 
 ## HTTP enforcement test
 
@@ -168,6 +171,29 @@ python3 npb_testing_https.py \
 
 The script uses Python `range(start, stop, step)`, so these arguments run one 1,000-pps job for approximately eight seconds. The `--sizes` value is stored as result metadata; the packet bytes still come from the fixed 583-byte capture.
 
+## Telemetry and PostgreSQL verification
+
+Backend direct sender field names match the database schema: `rstClient`, `rstServer`, `rx_i_http_*`, `rx_i_tls_*`, `rx_o_*`, and `tx_o_*`. Before a traffic run, record a packet-row baseline because telemetry is sent once per minute:
+
+```bash
+baseline=$(PGPASSWORD=postgres psql -h 127.0.0.1 -U postgres -d test -Atc \
+  'SELECT COALESCE(MAX(packet_id),0) FROM ps_packet;')
+echo "baseline packet_id=${baseline}"
+```
+
+Wait at least 70 seconds after the generator run (telemetry is sent once per minute), then query only rows newer than that baseline (use the actual table/column names shown by `\dt`/`\d ps_packet` if a checkout differs):
+
+```bash
+sleep 70
+```
+
+```bash
+PGPASSWORD=postgres psql -h 127.0.0.1 -U postgres -d test \
+  -c "SELECT packet_id, \"rstClient\", \"rstServer\", rx_i_http_count, rx_i_tls_count, rx_o_count, tx_o_count FROM ps_packet WHERE packet_id > ${baseline} ORDER BY packet_id;"
+```
+
+HTTP evidence should show `rx_i_http_count` about 1,000, `rx_i_tls_count` 0, RST client/server about 1,000 each, output RX/TX about 1,000/2,000, output drop about 1,000, HTTP/output throughput nonzero, and TLS throughput 0. TLS evidence is symmetric: HTTP zero, TLS input about 1,000, RST about 1,000 each, output RX/TX about 1,000/2,000, TLS throughput about `587000`, and output throughput about `108000`. One- or two-packet differences are sampling-boundary effects.
+
 ## Verified TLS evidence
 
 - NPB: up to 1,000 `TLS CLIENT HELLO match` packets per active reporting interval, forwarded through TLS output port 2.
@@ -181,17 +207,21 @@ Counters returning to zero after the run represent idle one-second intervals, no
 
 The post-reboot repeat on 17 September 2026 produced the same behavior: NPB matched and forwarded 1,004 TLS Client Hello packets through port 2, Policy produced stable 1,000-request intervals with 2,000 RST transmissions, and TRex finished with 8,017 transmitted packets and 16,034 received frames. All three components again reported zero interface errors.
 
+## Full blocked-list CRUD propagation
+
+Create, update, and delete were each verified through Backend → PostgreSQL → Kafka → Policy SQLite. For each operation, query PostgreSQL and the live Policy database while the Policy service is running, then confirm the corresponding Kafka event. The Backend update response displayed an odd `updatedAt:{val:"CURRENT_TIMESTAMP"}` object even though PostgreSQL stored the correct timestamp; treat that as a response-format issue, not a persistence failure.
+
 ## What is proven
 
 - TRex can transmit the repository's HTTP and TLS profiles.
 - The NPB receives, classifies, and forwards HTTP GET and TLS Client Hello traffic through the correct LAN segments.
-- Kafka policies reach the Policy Server's SQLite database.
+- Kafka policies reach the Policy Server's SQLite database for create/update/delete operations.
 - The Policy Server matches both repository profiles, blocks them, and emits both TCP RST directions.
 - RST frames return to TRex through `NetPro-RX`.
 
 ## Current source limitation
 
-The unmodified Policy Server does not process HTTP and TLS inputs simultaneously. It polls only DPDK application port 0 while application port 1 is used for RST transmission. Testing therefore requires switching its DPDK input between the HTTP and TLS adapters. Supporting both inputs concurrently requires a deliberate Policy Server source change and a separate review.
+The Policy process uses the selected DPDK application port 0 for input and application port 1 for RST transmission. It does not consume both HTTP and TLS inputs simultaneously; switch modes between runs. The local telemetry fix maps the selected input to the correct HTTP/TLS fields and does not change this selectable-mode limitation.
 
 ## Screenshot checklist
 

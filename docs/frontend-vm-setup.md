@@ -202,7 +202,7 @@ This is required because the native Policy and NPB processes use libcurl and rej
 
 Policy and NPB heartbeats reached PostgreSQL correctly, but the Backend repository's existing 15-second status-check cron block was commented out. It was enabled locally in `src/app.js`, syntax-checked, and the Backend service was restarted. After that, both dashboard cards changed from **Inactive** to **Active**.
 
-This is an intentional local source deviation and remains uncommitted pending a separate source review.
+This is the intentional local Backend commit `bd3c3fc Enable device heartbeat status checks` (placeholder author metadata). Keep it local during a rebuild and review it separately before any upstream push.
 
 ## Reboot verification
 

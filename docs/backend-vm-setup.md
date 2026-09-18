@@ -2,7 +2,7 @@
 
 > Status: PostgreSQL, HTTPS API, Kafka integration, systemd startup, reboot persistence, and Backend-to-Policy synchronization verified on 16 September 2026.
 
-This guide follows `Network-Laboratory-UI/NetPro-Backend` without modifying tracked repository files. Compatibility files, certificates, database initialization, and the systemd service remain local to the VM.
+This guide follows `Network-Laboratory-UI/NetPro-Backend`. Compatibility files, certificates, database initialization, and the systemd service remain local to the VM. The verified heartbeat change is the local-only commit `bd3c3fc Enable device heartbeat status checks` (placeholder author metadata exists); do not push it during a lab rebuild.
 
 ## Verified result
 
@@ -14,6 +14,7 @@ This guide follows `Network-Laboratory-UI/NetPro-Backend` without modifying trac
 - PostgreSQL and Backend services start automatically
 - Kafka producer, admin client, and `logging-dashboard` consumer connect to `192.168.0.90:9092`
 - A blocked-list record created through the API persisted in PostgreSQL and arrived in the Policy Server SQLite database through Kafka
+- blocked-list create, update, and delete operations propagated through PostgreSQL → Kafka → Policy SQLite
 - Control address, services, HTTPS API, and stored data survived a reboot
 
 ## VMware hardware
@@ -333,13 +334,91 @@ Backend REST API -> PostgreSQL -> Kafka dpdk-blocked-list
                  -> Policy Server consumer -> SQLite policies
 ```
 
+## Verify packet telemetry with a baseline
+
+The Policy direct sender uses the same field names as the `ps_packet` database model: `rstClient`, `rstServer`, `rx_i_http_*`, `rx_i_tls_*`, `rx_o_*`, and `tx_o_*`. Since the sender posts once per minute, capture a baseline before traffic, wait at least 70 seconds after the run, and query only newer rows:
+
+```bash
+baseline=$(PGPASSWORD=postgres psql -h 127.0.0.1 -U postgres -d test -Atc \
+  'SELECT COALESCE(MAX(packet_id),0) FROM ps_packet;')
+echo "baseline packet_id=${baseline}"
+```
+
+Run the HTTP or TLS generator now. After it exits, wait at least 70 seconds for the minute-boundary sender:
+
+```bash
+sleep 70
+```
+
+Then query only rows newer than the baseline:
+
+```bash
+PGPASSWORD=postgres psql -h 127.0.0.1 -U postgres -d test \
+  -c "SELECT packet_id, \"rstClient\", \"rstServer\", rx_i_http_count, rx_i_tls_count, rx_o_count, tx_o_count FROM ps_packet WHERE packet_id > ${baseline} ORDER BY packet_id;"
+```
+
+If the table is empty on a new build, first confirm that the Policy service is running and that its trusted Backend URL is reachable without `-k`; do not mistake a pre-baseline empty result for a telemetry failure.
+
+## Verify blocked-list CRUD propagation
+
+Use a disposable blocked-list row and record its UUID. Verify all three operations, not only create:
+
+1. `POST /ps/blocked-list`; confirm the row in PostgreSQL and the matching Policy SQLite row.
+2. Update the same row; confirm the PostgreSQL values and matching Kafka/SQLite update.
+3. Delete the row; confirm it is absent from PostgreSQL and Policy SQLite.
+
+The update API response may display `updatedAt:{val:"CURRENT_TIMESTAMP"}` even when PostgreSQL stores the correct timestamp. Treat that as a response-format issue and verify the database value directly. Keep test domains, IDs, and credentials disposable.
+
 ## Enable dashboard heartbeat status evaluation
 
 Policy and NPB processes send heartbeats that are stored in `ps_heartbeat` and `npb_heartbeat`. The repository already contains a 15-second cron block in `src/app.js` that calls both heartbeat-check controllers, but that block was commented out in the verified checkout.
 
-For the current VM, the existing block was enabled locally, checked with `node --check src/app.js`, and `netpro-backend` was restarted. This changed both registered dashboard cards from **Inactive** to **Active** while their native processes were running.
+On a fresh checkout, re-enable the exact block only after checking that the expected commented form is present:
 
-This is a local, uncommitted component-repository deviation. Review it as a separate source change before pushing it upstream.
+```bash
+set -euo pipefail
+cd ~/NetPro-Backend
+grep -Fq '// cron.schedule("*/15 * * * * *", async () => {' src/app.js
+cp -a src/app.js src/app.js.before-bd3c3fc
+python3 - <<'PY'
+from pathlib import Path
+
+path = Path("src/app.js")
+source = path.read_text()
+old = '''// // Cron job to run every 15 seconds
+// cron.schedule("*/15 * * * * *", async () => {
+//   try {
+//     // Call the controller function to perform heartbeat check
+//     await npbController.performHeartbeatCheck();
+//     await psContoller.performHeartbeatCheck();
+//   } catch (error) {
+//     console.error("Error in cron job:", error);
+//   }
+// });'''
+new = '''// Cron job to run every 15 seconds
+cron.schedule("*/15 * * * * *", async () => {
+  try {
+    // Call the controller function to perform heartbeat check
+    await npbController.performHeartbeatCheck();
+    await psContoller.performHeartbeatCheck();
+  } catch (error) {
+    console.error("Error in cron job:", error);
+  }
+});'''
+if old not in source:
+    raise SystemExit("Refusing edit; expected commented 15-second heartbeat block was not found")
+path.write_text(source.replace(old, new, 1))
+PY
+node --check src/app.js
+sudo systemctl restart netpro-backend
+systemctl is-active netpro-backend
+```
+
+For the current VM, the existing block was enabled locally, checked with `node --check src/app.js`, and `netpro-backend` was restarted. The verified local commit is `bd3c3fc Enable device heartbeat status checks` (placeholder author metadata exists). This changed both registered dashboard cards from **Inactive** to **Active** while their native processes were running.
+
+This is a local component-repository deviation. Keep it local for the rebuild and review it as a separate source change before any upstream push.
+
+After Policy and NPB are running, wait at least 15 seconds and verify fresh rows in `ps_heartbeat` and `npb_heartbeat`, then confirm both dashboard cards become **Active**. To roll back only this local edit, stop Backend and restore `src/app.js.before-bd3c3fc`, run `node --check src/app.js`, and restart the service. If recording the local source change, stage only `src/app.js`; never push it upstream.
 
 ## Distribute the Backend public certificate
 

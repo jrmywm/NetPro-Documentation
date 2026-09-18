@@ -30,7 +30,10 @@ This is the consolidated incident record for the verified NetPro lab build. The 
 | Hugepage setup reported pages still in use even though the process had stopped | Stale `/dev/hugepages/rtemap_*` mappings remained. | Confirmed no DPDK process was running, removed only the stale mappings, and restarted preparation. |
 | `Error: number of ports must be 3` | The message is misleading; DPDK saw no bound data ports after the NICs returned to `vmxnet3`. | Checked `dpdk-devbind.py -s` and rebound the required adapters. |
 | Policy PCI/interface mapping changed after VMware adapter repair | Removing or re-adding an adapter can change Linux names and PCI addresses. | Rediscovered the mapping and updated the local preparation helper. Never assume PCI addresses from another VM or an old snapshot. |
-| HTTP and TLS could not be monitored simultaneously | The current Policy source polls application port 0 and uses port 1 for RST output. | Added the local `netpro-policy-mode` helper to bind HTTP+RST or TLS+RST safely; HTTP is restored at boot. A source change is still needed for simultaneous inputs. |
+| Policy reported misleading three-port requirement | The runtime accepts exactly two DPDK ports: selected input plus RST/output; an old error string says three. | Use HTTP `0b:00.0` + RST `1b:00.0`, or TLS `13:00.0` + RST `1b:00.0`. The local `netpro-policy-mode` helper controls the selection and writes `NETPRO_POLICY_MODE`. |
+| HTTP/TLS telemetry was assigned to nonexistent ports | `policyServer.c` hard-coded port 0 HTTP, port 1 TLS, port 2 output in CSV and `populate_json_stats()`. | Local commit `d658fa2 Fix two-port policy telemetry mapping` reads `NETPRO_POLICY_MODE`, reports only the selected protocol, and treats port 1 as RST/output. `aggregator.c` is legacy and is not the live sender. Keep this commit local unless separately reviewed. |
+| Policy telemetry mode can disagree with bindings after rebooting from TLS mode | The boot preparation script always restores the HTTP NIC pair, while `/etc/default/netpro-policy` retains its last value. | Before reboot, stop Policy and run `sudo netpro-policy-mode http`. If a mismatch already occurred, stop Policy, run the HTTP mode helper, and start Policy again before generating traffic. |
+| HTTP and TLS could not be monitored simultaneously | The current Policy source polls application port 0 and uses port 1 for RST output. | Keep separate selectable HTTP/TLS runs; the telemetry fix does not add a second input. HTTP is restored at boot by the preparation service. |
 
 ## Kafka issues
 
@@ -53,7 +56,7 @@ This is the consolidated incident record for the verified NetPro lab build. The 
 | Packet Generator repository was cloned in the wrong location | The scripts expect to run inside TRex's interactive Python tree. | Installed it under `/opt/trex/v3.04/automation/trex_control_plane/interactive/trex/npb_test`. |
 | Cisco TRex download certificate verification failed | The guest CA store could not validate the presented chain. | Checked the clock and CA package first. `--no-check-certificate` was accepted only as an isolated-lab fallback, followed by verification of extracted TRex files. |
 | NPB hugepages and bindings disappeared after reboot | Like Policy, its DPDK runtime state is volatile. | Added `netpro-npb-dpdk-prepare.service` and `netpro-npb.service`. A later reboot verified the stable IP, both services, 2 GB of hugepages, all three DPDK bindings, three-port application output, and successful HTTP and TLS enforcement retests with zero interface/mbuf errors. |
-| Packet Generator TLS client could not reach `127.0.0.1:4501` | The TRex server/RPC listener was no longer running. Ubuntu's crash hook then imported the repository's local `http.py`, producing a misleading secondary Scapy permission traceback. | Restarted `sudo ./t-rex-64 -i`, kept its terminal open, and reran the client as `netpro`. The successful retry produced the expected 2:1 RST return ratio. |
+| Packet Generator TLS client could not reach `127.0.0.1:4501` | The TRex server/RPC listener was no longer running. Ubuntu's apport crash hook then imported the repository's local `http.py`, shadowing Python's standard-library module and producing a misleading secondary Scapy permission traceback. | Started `/usr/local/sbin/netpro-trex-start` with `/etc/trex_cfg.yaml`, kept it in the foreground, and reran the client. The successful retry produced the expected 2:1 RST return ratio. |
 
 ## Backend and Frontend issues
 
@@ -64,8 +67,8 @@ This is the consolidated incident record for the verified NetPro lab build. The 
 | Policy and NPB rejected Backend HTTPS with curl error 60 | The Backend certificate is self-signed. | Installed only its public certificate in each VM's CA store and verified requests without `-k`. The private key stays on Backend. |
 | Frontend at `192.168.0.95:3005` timed out from Windows | The stable `192.168.0.0/24` addresses are for VM-to-VM control; Windows was using VMware NAT access. | Opened Frontend at `https://192.168.31.136:3005` and configured the browser-facing API as `https://192.168.31.135:3000`. |
 | Browser API requests needed a separate certificate exception | Frontend and Backend use different self-signed certificates. | Opened the Backend API URL first and accepted its warning, then opened Frontend and accepted its certificate warning. |
-| Dashboard cards stayed Inactive although heartbeat rows existed | The Backend's existing 15-second heartbeat status cron block was commented out. | Enabled that block locally, syntax-checked it, restarted Backend, and verified both device cards changed to Active. This source deviation is intentionally uncommitted pending review. |
-| Services worked manually but needed to survive restarts | Initial commands were foreground/manual. | Added systemd units for Kafka/ZooKeeper, Backend, Frontend, NPB preparation, and NPB. Policy DPDK preparation is automatic; the Policy application remains manually launched because its HTTP/TLS mode must be selected. |
+| Dashboard cards stayed Inactive although heartbeat rows existed | The Backend's existing 15-second heartbeat status cron block was commented out. | Enabled that block locally, syntax-checked it, restarted Backend, and verified both device cards changed to Active. Local commit only: `bd3c3fc Enable device heartbeat status checks` (placeholder author metadata); do not push it as part of setup. |
+| Services worked manually but needed to survive restarts | Initial commands were foreground/manual. | Added systemd units for Kafka/ZooKeeper, Backend, Frontend, Policy preparation/application, and NPB preparation/application. Policy defaults to HTTP at boot; stop the Policy unit before selecting TLS. |
 
 ## Verified but intentionally local values
 
@@ -77,8 +80,16 @@ This is the consolidated incident record for the verified NetPro lab build. The 
 
 Generated configuration files, certificates, private keys, passwords, VM files, captures, logs, and build output remain outside Git.
 
+## Rebuild recovery and rollback notes
+
+- If Policy does not start after reboot, stop `netpro-policy`, check `netpro-dpdk-prepare`, hugepages, and `dpdk-devbind.py -s`, then restore HTTP mode with `sudo netpro-policy-mode http` before starting the unit.
+- If a mode switch is attempted while Policy is running, stop the unit first. The helper intentionally refuses a live rebind; this protects the process from a half-bound pair.
+- If telemetry rows are missing, verify the Backend certificate trust and wait at least 70 seconds after traffic; the sender posts once per minute. Compare rows newer than a recorded `MAX(packet_id)` baseline.
+- If TRex RPC fails, confirm it is listening on 4500/4501 before changing Python or PCAP files.
+- To roll back local source deviations, stop the affected service and restore the separately saved pre-change source/binary; never delete active builds or `*.before-*` backups without first identifying them.
+
 ## Still pending
 
-- Validate mixed HTTP, TLS, and UDP workloads after deciding how to handle the Policy Server's single-input limitation.
-- Review the Backend heartbeat scheduler change as a proper source-code change before any upstream push.
+- Validate mixed HTTP, TLS, and UDP workloads after deciding how to schedule the Policy Server's selectable input modes.
+- Review the two local source commits as proper source changes before any upstream push.
 - Decide which screenshots, PCAPs, and result files should be retained as formal test evidence.

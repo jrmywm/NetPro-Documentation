@@ -216,6 +216,8 @@ It is invoked by the enabled oneshot service `netpro-npb-dpdk-prepare.service`. 
 /home/netpro/NetPro-Network-Packet-Broker/build/packetBroker -l 0-3 -n 2
 ```
 
+The preparation service is the source of truth after reboot: it allocates `1024` × `2 MB` hugepages (2 GB), brings the three data interfaces down, and binds exactly `0000:0b:00.0`, `0000:13:00.0`, and `0000:1b:00.0` to `uio_pci_generic`. The application service must start only after that oneshot has completed. If a NIC is replaced in VMware, rediscover PCI addresses and update the VM-local helper before restarting; do not bind the NAT management adapter.
+
 Verify both services and the runtime state:
 
 ```bash
@@ -303,6 +305,8 @@ curl -i https://192.168.0.94:3000/npb/npbs
 ```
 
 Never copy the Backend private key to this VM.
+
+If curl reports error 60, the certificate was not installed or the trust store was not refreshed. Fix `/usr/local/share/ca-certificates/netpro-backend.crt` and rerun `sudo update-ca-certificates`; do not hide the problem with `-k` in the running service.
 
 ## Validation record
 
