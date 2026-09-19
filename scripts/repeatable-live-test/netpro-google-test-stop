@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+STATE_DIR=/run/netpro-google-test
+STATE_FILE="$STATE_DIR/state"
+HOSTS_TAG=netpro-google-test
+MIRROR_STOP=/usr/local/sbin/netpro-proxy-mirror-stop
+
+if [[ $EUID -ne 0 ]]; then
+    echo "Run with sudo: sudo $0" >&2
+    exit 1
+fi
+
+if [[ ! -r $STATE_FILE ]]; then
+    echo "No saved test state found; cleaning test objects without changing service or sysctl state."
+    RP_FILTER=$(sysctl -n net.ipv4.conf.all.rp_filter)
+    TINYP_ACTIVE=active
+else
+    # The file is root-owned, mode 0600, and contains values written by start.
+    source "$STATE_FILE"
+fi
+
+if [[ -x $MIRROR_STOP ]]; then
+    "$MIRROR_STOP"
+fi
+
+sed -i "\\|# $HOSTS_TAG$|d" /etc/hosts
+sysctl -q -w "net.ipv4.conf.all.rp_filter=$RP_FILTER"
+
+if [[ $TINYP_ACTIVE != active ]]; then
+    systemctl stop tinyproxy
+fi
+
+rm -f "$STATE_FILE"
+rmdir "$STATE_DIR" 2>/dev/null || true
+
+echo "NetPro Google test gateway stopped and previous state restored."

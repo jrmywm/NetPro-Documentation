@@ -19,6 +19,7 @@ Every VM guide has a reboot checkpoint. Do not advance to packet-path testing un
 - [NPB VM setup](npb-vm-setup.md) — HTTP and TLS classification verified
 - [Packet Generator VM setup](packet-generator-vm-setup.md) — repository HTTP and TLS tests verified
 - [End-to-end HTTP and TLS validation](end-to-end-http-validation.md) — policy matching, TCP-reset return, and HTTP/TLS telemetry verified
+- [Repeatable live Google block/allow validation](repeatable-live-google-test.md) — pinned-IP HTTPS block, isolated Edge check, cache-invalidation rollback, and helper scripts
 - [Backend VM setup](backend-vm-setup.md) — PostgreSQL, HTTPS API, Kafka, and Policy synchronization verified
 - [Frontend VM setup](frontend-vm-setup.md) — HTTPS dashboard, authentication, device pairing, service startup, and reboot persistence verified
 - [Setup obstacles and fixes](setup-obstacles-and-fixes.md) — consolidated incident record, resolutions, and remaining validation

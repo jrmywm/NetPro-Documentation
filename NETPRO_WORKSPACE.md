@@ -237,6 +237,7 @@ The cold-start HTTP run (`npb_testing_http.py`, size `256`, 1,000 pps) passed wi
 - [NPB VM setup](docs/npb-vm-setup.md): verified through HTTP/TLS forwarding, automatic startup, and reboot persistence.
 - [Packet Generator VM setup](docs/packet-generator-vm-setup.md): verified with the repository HTTP and TLS scripts and RST reception.
 - [End-to-end HTTP and TLS validation](docs/end-to-end-http-validation.md): verified through policy matching, blocking, TCP-reset return, and a complete powered-off cold-start acceptance test.
+- [Repeatable live Google block/allow validation](docs/repeatable-live-google-test.md): verified with Policy commit `6784d46`, 10/10 blocked curl attempts, isolated Edge failure, and no-restart rollback to HTTP 200.
 - [Backend VM setup](docs/backend-vm-setup.md): verified through reboot and Backend-to-Policy database synchronization.
 - [Frontend VM setup](docs/frontend-vm-setup.md): verified through reboot, authentication, device pairing, and active dashboard status.
 - [Setup obstacles and fixes](docs/setup-obstacles-and-fixes.md): consolidated record of encountered failures, causes, resolutions, and pending checks.

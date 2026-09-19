@@ -230,6 +230,8 @@ Create, update, and delete were each verified through Backend → PostgreSQL →
 
 ## What is proven
 
+For a repeatable real-browser HTTPS check with a temporary pinned Google policy and no Policy restart during rollback, see [Repeatable live Google block/allow validation](repeatable-live-google-test.md).
+
 - TRex can transmit the repository's HTTP and TLS profiles.
 - The NPB receives, classifies, and forwards HTTP GET and TLS Client Hello traffic through the correct LAN segments.
 - Kafka policies reach the Policy Server's SQLite database for create/update/delete operations.
