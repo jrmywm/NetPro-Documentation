@@ -14,7 +14,7 @@ This documentation is a rebuild runbook for the complete six-VM lab. Build each 
 Every VM guide has a reboot checkpoint. Do not advance to packet-path testing until the relevant service, address, hugepages, bindings, and certificate checks pass.
 
 - [Workspace, repository, and laptop-switch workflow](../NETPRO_WORKSPACE.md)
-- [Current three-port Policy Server runbook](policy-three-port-upgrade.md) - concurrent HTTP/TLS processing and mixed-traffic telemetry verified; cold-start after reboot remains pending
+- [Current three-port Policy Server runbook](policy-three-port-upgrade.md) - concurrent HTTP/TLS processing and mixed-traffic telemetry verified before and after Policy VM reboot
 - [Policy Server VM setup](policy-server-vm-setup.md) - historical two-port mode-switching setup and telemetry fix; retained as historical evidence
 - [Kafka Broker VM setup](kafka-broker-vm-setup.md) - verified
 - [NPB VM setup](npb-vm-setup.md) - HTTP and TLS classification verified
@@ -25,4 +25,4 @@ Every VM guide has a reboot checkpoint. Do not advance to packet-path testing un
 - [Frontend VM setup](frontend-vm-setup.md) - HTTPS dashboard, authentication, device pairing, service startup, and reboot persistence verified
 - [Setup obstacles and fixes](setup-obstacles-and-fixes.md) - consolidated incident record, resolutions, and remaining validation
 
-The component repositories under `repos/` are read-only baselines for these guides unless a separate source-code change is intentionally requested. Verified local source history includes Policy commits `d658fa2` (historical two-port telemetry mapping) and `e75c9f2` (three-port concurrent HTTP/TLS processing), plus Backend commit `bd3c3fc` (15-second heartbeat status checks); these are lab evidence, not instructions to push upstream. The three-port boot layout has not yet been reboot-tested. VM files, captures, generated output, secrets, certificates, binaries, logs, and `*.before-*` backups are local-only.
+The component repositories under `repos/` are read-only baselines for these guides unless a separate source-code change is intentionally requested. Verified local source history includes Policy commits `d658fa2` (historical two-port telemetry mapping) and `e75c9f2` (three-port concurrent HTTP/TLS processing), plus Backend commit `bd3c3fc` (15-second heartbeat status checks); these are lab evidence, not instructions to push upstream. The three-port Policy layout and mixed traffic were verified after a Policy VM reboot on 25 September 2026. VM files, captures, generated output, secrets, certificates, binaries, logs, and `*.before-*` backups are local-only.

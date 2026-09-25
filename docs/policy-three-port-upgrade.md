@@ -11,7 +11,7 @@ This is the current runbook for the Policy Server build that processes HTTP and 
 | RST output | `0000:1b:00.0` | `ens256` |
 | Management | `0000:02:01.0` | `ens33` |
 
-The service was manually started with all three data adapters bound to `uio_pci_generic`; DPDK probed the three devices. Sequential HTTP and TLS checks passed without changing bindings. A mixed workload also passed. The three-port layout has **not** been reboot-tested, so do not treat boot persistence as verified. `ens33` must stay kernel-managed for SSH and control-network access.
+The service started with all three data adapters bound to `uio_pci_generic`; DPDK probed the three devices. Sequential HTTP and TLS checks passed without changing bindings, and a mixed workload passed. After a Policy VM reboot, both Policy services were active, the three DPDK bindings and 2 GB of hugepages returned, and another mixed workload passed. `ens33` remained kernel-managed for SSH and control-network access.
 
 The reproducible source snapshot is [policyServer.c](../assets/policy-three-port/policyServer.c). An incremental patch is also available at [policyServer-three-port.patch](../assets/policy-three-port/policyServer-three-port.patch); it applies only to the source baseline identified by commit `6784d46` and SHA-256 `72eaf6eb8dfc1ec62201970e9172b8db32dceeff0f8858b44d89bec1bba65382`. Verify the source before applying; do not apply this patch to a different revision or assume it is a patch against the later deployed commit `e75c9f2`. The documented VM already runs `e75c9f2`; the rebuild procedure below is for a VM at the exact baseline, not a second upgrade of that VM.
 
@@ -103,7 +103,7 @@ echo "Three-port Policy layout ready."
 /usr/local/bin/dpdk-devbind.py -s
 ```
 
-These helpers are installed under `/usr/local/sbin` on the VM and are included as versioned assets alongside the source. In the observed pre-upgrade configuration, `netpro-policy.service` requires the preparation service and reads `/etc/default/netpro-policy`; the candidate source no longer uses `NETPRO_POLICY_MODE` to select ports, so a legacy `NETPRO_POLICY_MODE=http` value there does not change the three-port layout. No systemd unit edit is required solely for that legacy value. This describes the inspected unit configuration; it is not evidence of a cold-start test with the new helpers. Keep runtime copies, `/etc/default/netpro-policy`, and backups out of machine-independent instructions.
+These helpers are installed under `/usr/local/sbin` on the VM and are included as versioned assets alongside the source. `netpro-policy.service` requires the preparation service and reads `/etc/default/netpro-policy`; the current source no longer uses `NETPRO_POLICY_MODE` to select ports, so a legacy `NETPRO_POLICY_MODE=http` value there does not change the three-port layout. No systemd unit edit is required solely for that legacy value. The post-reboot checks below verified the active services and restored bindings. Keep runtime copies, `/etc/default/netpro-policy`, and backups out of machine-independent instructions.
 
 ## Fresh VM using the source snapshot
 
@@ -243,11 +243,15 @@ ORDER BY packet_id DESC
 LIMIT 15;"
 ```
 
-The sample interval showed both `rx_i_http_count` and `rx_i_tls_count` nonzero in the same Policy rows, with `rstClient` and `rstServer` each close to twice either single input count. This is evidence that both protocols were processed concurrently during that mixed run. It does not establish reboot persistence; perform and record a separate cold-start test before marking that check complete.
+The sample interval showed both `rx_i_http_count` and `rx_i_tls_count` nonzero in the same Policy rows, with `rstClient` and `rstServer` each close to twice either single input count. This is evidence that both protocols were processed concurrently during that mixed run.
 
-## Pending reboot acceptance
+## Post-reboot acceptance
 
-When a maintenance window is available, reboot the Policy VM and check that `netpro-dpdk-prepare` and `netpro-policy` are active, 2 GB of hugepages are mounted, all three data NICs return to `uio_pci_generic`, and `ens33` remains kernel-managed. Then repeat a short mixed run and inspect new `ps_packet` rows. Record the result before marking boot persistence verified.
+After rebooting the Policy VM on 25 September 2026, `netpro-dpdk-prepare` and `netpro-policy` both reported `active`. `dpdk-hugepages.py -s` showed 1,024 mounted 2 MB pages (2 GB). `netpro-policy-mode status` showed all three data PCI devices on `uio_pci_generic`, while management `ens33` stayed on `e1000` with `192.168.0.91/24` and `192.168.31.131/24`.
+
+A new mixed run after that reboot produced Policy rows `101852`–`101860` at `02:19:14`–`02:19:22 UTC`, all after baseline packet ID `101778`. Each full second recorded 250 HTTP and 250 TLS inputs in the same row, 500 client and 500 server RSTs, and 1,000 output packets. These observations verify Policy startup, bindings, and concurrent traffic processing after a VM reboot. They do not constitute a powered-off cold-start test of the entire six-VM lab.
+
+To repeat the check, reboot the Policy VM, confirm both services and the three bindings, record a new `ps_packet` baseline, run `npb_testing_http_https_udp.py` once, and query rows newer than that baseline with both `rx_i_http_count` and `rx_i_tls_count` above zero.
 
 ## Rollback
 

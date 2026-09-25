@@ -43,7 +43,7 @@ NetPro Documentation/
 | VM | OS | Management address | NetPro address | Status |
 | --- | --- | --- | --- | --- |
 | `Kafka-Broker-VM` | Ubuntu 24.04 | DHCP: `192.168.31.132` | `192.168.0.90/24` | Verified, automatic boot |
-| `Policy-Server-VM` | Ubuntu 20.04 | DHCP: `192.168.31.131` | `192.168.0.91/24` | Three-port concurrent HTTP/TLS and RST output verified; reboot persistence pending |
+| `Policy-Server-VM` | Ubuntu 20.04 | DHCP: `192.168.31.131` | `192.168.0.91/24` | Three-port concurrent HTTP/TLS and RST output verified before and after reboot |
 | `NPB-VM` | Ubuntu 20.04 | DHCP: `192.168.31.133` | `192.168.0.92/24` | HTTP/TLS forwarding and automatic reboot recovery verified |
 | `Packet-Generator-VM` | Ubuntu 20.04 | DHCP: `192.168.31.134` | `192.168.0.93/24` | TRex v3.04 HTTP/TLS generation and RST reception verified |
 | `Backend-VM` | Ubuntu 24.04 | DHCP: `192.168.31.135` | `192.168.0.94/24` | PostgreSQL, HTTPS API, Kafka, and reboot persistence verified |
@@ -212,7 +212,7 @@ Policy Server port 1 → NetPro-RX → TRex port 0
 
 The HTTP test matched `facebook.co.id` at `48.0.0.1`. The TLS test matched SNI `www.ui.ac.id` at `152.118.24.175:443`. In each test, the NPB classified and forwarded approximately 1,000 requests per active interval; the Policy Server blocked matching requests and emitted client- and server-directed RST frames with zero reported interface errors. The TLS run ended with 8,016 TRex transmissions and 16,032 received RST frames.
 
-The earlier Policy build used two DPDK ports and selectable HTTP/TLS modes; those setup details remain in the [historical VM guide](docs/policy-server-vm-setup.md) and [historical end-to-end procedure](docs/end-to-end-http-validation.md). The current local build is commit `e75c9f2`: HTTP and TLS inputs are polled concurrently on `0b:00.0` and `13:00.0`, and both reset directions leave through `1b:00.0`. The mixed test recorded approximately 250 packets per second for each input, with approximately 500 client and 500 server RSTs per second. See the [current three-port runbook](docs/policy-three-port-upgrade.md). A cold reboot of this new three-port layout is not yet verified.
+The earlier Policy build used two DPDK ports and selectable HTTP/TLS modes; those setup details remain in the [historical VM guide](docs/policy-server-vm-setup.md) and [historical end-to-end procedure](docs/end-to-end-http-validation.md). The current local build is commit `e75c9f2`: HTTP and TLS inputs are polled concurrently on `0b:00.0` and `13:00.0`, and both reset directions leave through `1b:00.0`. The mixed test recorded approximately 250 packets per second for each input, with approximately 500 client and 500 server RSTs per second. The same behavior was verified after rebooting the Policy VM; see the [current three-port runbook](docs/policy-three-port-upgrade.md).
 
 The application control path is also verified:
 
@@ -227,7 +227,7 @@ The Frontend HTTPS dashboard was verified from the Windows host. Registration an
 
 ## Powered-off cold-start acceptance
 
-The following 19 September 2026 results are for the earlier two-port Policy build. They do not verify cold-start persistence for the current three-port build; see the [three-port runbook](docs/policy-three-port-upgrade.md) for its current status.
+The following 19 September 2026 results are for the earlier two-port Policy build. The current three-port Policy VM was rebooted and validated separately on 25 September 2026; see the [three-port runbook](docs/policy-three-port-upgrade.md).
 
 On 19 September 2026, all six VMs were powered off cleanly and restarted. Kafka/ZooKeeper were active on ports `2181`/`9092`; Backend/PostgreSQL were active and `HTTPS /ps/blocked-list` returned `200` with persisted data; and Frontend was active on port `3005`, with login working and NPB and Policy shown as **Active** on the dashboard. NPB preparation/service was active with 2 GB hugepages and DPDK PCI `0b:00.0`, `13:00.0`, and `1b:00.0`. Policy preparation/service was active with 2 GB hugepages, boot-safe HTTP bindings `0b:00.0` + `1b:00.0`, and kernel-managed `13:00.0`. TRex was manually started with ports `4500`/`4501` listening.
 
@@ -235,7 +235,7 @@ The cold-start HTTP run (`npb_testing_http.py`, size `256`, 1,000 pps) passed wi
 
 ## Documentation status
 
-- [Policy Server VM setup](docs/policy-server-vm-setup.md): historical two-port configuration; three-port concurrent traffic verified, cold reboot pending ([runbook](docs/policy-three-port-upgrade.md)).
+- [Policy Server VM setup](docs/policy-server-vm-setup.md): historical two-port configuration; current three-port traffic and Policy VM reboot verified ([runbook](docs/policy-three-port-upgrade.md)).
 - [Kafka Broker VM setup](docs/kafka-broker-vm-setup.md): verified through reboot.
 - [NPB VM setup](docs/npb-vm-setup.md): verified through HTTP/TLS forwarding, automatic startup, and reboot persistence.
 - [Packet Generator VM setup](docs/packet-generator-vm-setup.md): verified with the repository HTTP and TLS scripts and RST reception.
@@ -247,4 +247,4 @@ The cold-start HTTP run (`npb_testing_http.py`, size `256`, 1,000 pps) passed wi
 
 ## Local source and runtime boundary
 
-The lab record includes machine-local source changes: Policy commit `d658fa2 Fix two-port policy telemetry mapping`, its superseding three-port commit `e75c9f2`, and Backend commit `bd3c3fc Enable device heartbeat status checks`. They document verified lab state, not instructions to push upstream. Three-port cold-start behavior remains unverified. Keep runtime copies of `/etc/systemd/system` units, `/etc/default/netpro-policy`, and `/usr/local/sbin` helpers, along with generated configs, certificates and private keys, databases, logs, binaries, captures, and `*.before-*` backups out of Git. The versioned source and helper assets in this documentation repository are rebuild templates, not VM runtime state.
+The lab record includes machine-local source changes: Policy commit `d658fa2 Fix two-port policy telemetry mapping`, its superseding three-port commit `e75c9f2`, and Backend commit `bd3c3fc Enable device heartbeat status checks`. They document verified lab state, not instructions to push upstream. Three-port Policy startup and mixed traffic were verified after reboot on 25 September 2026. Keep runtime copies of `/etc/systemd/system` units, `/etc/default/netpro-policy`, and `/usr/local/sbin` helpers, along with generated configs, certificates and private keys, databases, logs, binaries, captures, and `*.before-*` backups out of Git. The versioned source and helper assets in this documentation repository are rebuild templates, not VM runtime state.
