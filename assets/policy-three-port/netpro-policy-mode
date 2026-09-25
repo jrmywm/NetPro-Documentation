@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+HTTP_PCI="0000:0b:00.0"
+TLS_PCI="0000:13:00.0"
+RST_PCI="0000:1b:00.0"
+
+if [[ $# -ne 1 ]]; then
+    echo "Usage: sudo netpro-policy-mode {all|status}"
+    exit 1
+fi
+
+if [[ "$1" == "status" ]]; then
+    echo "Policy port layout: HTTP + TLS inputs, dedicated RST output"
+    /usr/local/bin/dpdk-devbind.py -s
+    exit 0
+fi
+
+if [[ "$1" != "all" ]]; then
+    echo "This build uses all three data ports. Usage: sudo netpro-policy-mode {all|status}"
+    exit 1
+fi
+
+if /usr/bin/systemctl is-active --quiet netpro-policy ||
+   /usr/bin/pgrep -f '/build/policyServer' >/dev/null; then
+    echo "ERROR: Stop netpro-policy before changing DPDK bindings."
+    exit 1
+fi
+
+/usr/sbin/modprobe uio
+/usr/sbin/modprobe uio_pci_generic
+
+for interface in ens192 ens224 ens256; do
+    if /usr/sbin/ip link show "$interface" >/dev/null 2>&1; then
+        /usr/sbin/ip link set "$interface" down
+    fi
+done
+
+/usr/local/bin/dpdk-devbind.py -b uio_pci_generic \
+    "$HTTP_PCI" "$TLS_PCI" "$RST_PCI"
+
+echo "Three-port Policy layout ready."
+/usr/local/bin/dpdk-devbind.py -s

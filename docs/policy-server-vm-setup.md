@@ -1,8 +1,8 @@
 # NetPro Policy Server VM Setup
 
-This guide records the Policy Server VM configuration that was verified against the `Network-Laboratory-UI/NetPro-Policy-Server` repository. The runtime/source correction described below is the local commit `d658fa2 Fix two-port policy telemetry mapping`; it is part of the verified lab state, but must not be pushed to a Network-Laboratory repository as part of a rebuild.
+Historical note: this guide records the earlier two-port Policy Server VM configuration, including mode switching and local telemetry correction `d658fa2`. That state was superseded for current operation by the verified three-port build in [the current runbook](policy-three-port-upgrade.md). Keep this guide as evidence for the earlier setup; do not use its `http`/`tls` switching instructions with the three-port build.
 
-## Verified result
+## Historical two-port verified result
 
 The Policy Server successfully:
 

@@ -2,7 +2,7 @@
 
 > Result: HTTP and TLS policy enforcement verified on 15 September 2026 from TRex through the NPB and Policy Server, including TCP-reset delivery back to TRex. The complete six-VM stack was subsequently power-cycled from a clean powered-off state and revalidated on 19 September 2026.
 
-This procedure uses the verified local Policy telemetry fix `d658fa2` plus VM-local services. The Policy runtime accepts exactly two DPDK ports: the selected input and the RST/output port. HTTP and TLS are therefore validated as separate selectable modes by changing which input adapter is bound to DPDK. The second DPDK port remains the RST output in both modes.
+Historical note: this procedure documents the earlier two-port Policy build using local telemetry fix `d658fa2`; it remains useful evidence for sequential HTTP and TLS testing. Current concurrent HTTP/TLS validation uses all three adapters and is documented in [the three-port Policy runbook](policy-three-port-upgrade.md). Do not use the mode-switching steps here with the three-port build.
 
 ## Verified topology
 
@@ -362,7 +362,7 @@ For a repeatable real-browser HTTPS check with a temporary pinned Google policy 
 - The Policy Server matches both repository profiles, blocks them, and emits both TCP RST directions.
 - RST frames return to TRex through `NetPro-RX`.
 
-## Current source limitation
+## Historical two-port source limitation
 
 The Policy process uses the selected DPDK application port 0 for input and application port 1 for RST transmission. It does not consume both HTTP and TLS inputs simultaneously; switch modes between runs. The local telemetry fix maps the selected input to the correct HTTP/TLS fields and does not change this selectable-mode limitation.
 

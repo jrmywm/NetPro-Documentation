@@ -1,0 +1,2 @@
+assets/policy-three-port/* text eol=lf
+assets/policy-three-port/*.patch whitespace=-blank-at-eol,-space-before-tab

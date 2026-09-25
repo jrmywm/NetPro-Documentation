@@ -14,14 +14,15 @@ This documentation is a rebuild runbook for the complete six-VM lab. Build each 
 Every VM guide has a reboot checkpoint. Do not advance to packet-path testing until the relevant service, address, hugepages, bindings, and certificate checks pass.
 
 - [Workspace, repository, and laptop-switch workflow](../NETPRO_WORKSPACE.md)
-- [Policy Server VM setup](policy-server-vm-setup.md) - verified, including two-port mode switching, systemd startup, and telemetry fix
+- [Current three-port Policy Server runbook](policy-three-port-upgrade.md) - concurrent HTTP/TLS processing and mixed-traffic telemetry verified; cold-start after reboot remains pending
+- [Policy Server VM setup](policy-server-vm-setup.md) - historical two-port mode-switching setup and telemetry fix; retained as historical evidence
 - [Kafka Broker VM setup](kafka-broker-vm-setup.md) - verified
 - [NPB VM setup](npb-vm-setup.md) - HTTP and TLS classification verified
 - [Packet Generator VM setup](packet-generator-vm-setup.md) - repository HTTP and TLS tests verified
-- [End-to-end HTTP and TLS validation](end-to-end-http-validation.md) - policy matching, TCP-reset return, and HTTP/TLS telemetry verified
+- [End-to-end HTTP and TLS validation](end-to-end-http-validation.md) - historical sequential two-port validation; current concurrent validation is in the three-port runbook
 - [Repeatable live Google block/allow validation](repeatable-live-google-test.md) - pinned-IP HTTPS block, isolated Edge check, cache-invalidation rollback, and helper scripts
 - [Backend VM setup](backend-vm-setup.md) - PostgreSQL, HTTPS API, Kafka, and Policy synchronization verified
 - [Frontend VM setup](frontend-vm-setup.md) - HTTPS dashboard, authentication, device pairing, service startup, and reboot persistence verified
 - [Setup obstacles and fixes](setup-obstacles-and-fixes.md) - consolidated incident record, resolutions, and remaining validation
 
-The component repositories under `repos/` are read-only baselines for these guides unless a separate source-code change is intentionally requested. The only verified source fixes are the local Policy commit `d658fa2` (two-port telemetry mapping) and the local Backend commit `bd3c3fc` (15-second heartbeat status checks); neither should be pushed as part of a lab rebuild. VM files, captures, generated output, secrets, certificates, binaries, logs, and `*.before-*` backups are local-only.
+The component repositories under `repos/` are read-only baselines for these guides unless a separate source-code change is intentionally requested. Verified local source history includes Policy commits `d658fa2` (historical two-port telemetry mapping) and `e75c9f2` (three-port concurrent HTTP/TLS processing), plus Backend commit `bd3c3fc` (15-second heartbeat status checks); these are lab evidence, not instructions to push upstream. The three-port boot layout has not yet been reboot-tested. VM files, captures, generated output, secrets, certificates, binaries, logs, and `*.before-*` backups are local-only.
