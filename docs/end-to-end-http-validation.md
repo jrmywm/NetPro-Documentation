@@ -228,6 +228,130 @@ Policy was restored to boot-safe HTTP mode and its service was confirmed active 
 
 Create, update, and delete were each verified through Backend → PostgreSQL → Kafka → Policy SQLite. For each operation, query PostgreSQL and the live Policy database while the Policy service is running, then confirm the corresponding Kafka event. The Backend update response displayed an odd `updatedAt:{val:"CURRENT_TIMESTAMP"}` object even though PostgreSQL stored the correct timestamp; treat that as a response-format issue, not a persistence failure.
 
+## Controlled TLS endpoint and server-side RST test
+
+This test checks the server-directed reset against a controlled TLS listener instead of relying only on Policy counters or an Internet endpoint that we cannot capture. The listener runs on the test gateway's host-only address, `192.168.80.128:8443`; the test client is `192.168.80.129`. The client and server share the host-only subnet, so no client default-route change is needed. This is a lab validation, not a test against an independent Internet server.
+
+### Prepare the gateway and temporary TLS listener
+
+On `netpro-test-gateway`, start the test gateway and narrow its RST redirect to resets addressed to the client. The start helper initially installs a catch-all RST redirect; delete it before adding the client-only rule so server-bound resets continue into the gateway's local network stack:
+
+```bash
+sudo /usr/local/sbin/netpro-test-gateway-start
+sudo tc filter del dev ens38 ingress protocol ip pref 10
+sudo tc filter add dev ens38 ingress \
+  protocol ip pref 10 flower \
+  ip_proto tcp dst_ip 192.168.80.129 \
+  tcp_flags 0x04/0x04 \
+  action mirred egress redirect dev ens37
+sudo tc -s filter show dev ens38 ingress
+```
+
+Confirm the only filter at priority 10 includes `dst_ip 192.168.80.129`. Do not use `tc filter replace` here: it may leave the original catch-all rule installed alongside the new rule.
+
+The gateway helper replaces `clsact` qdiscs on `ens37` and `ens38`; use it only on the dedicated test gateway when those interfaces have no unrelated traffic-control filters to preserve.
+
+In a gateway terminal, create a short-lived self-signed certificate and run OpenSSL's test server in the foreground. Keep this terminal open and note the temporary directory printed by `echo` for cleanup:
+
+```bash
+TEST_DIR=$(mktemp -d /tmp/netpro-rst-test.XXXXXX)
+openssl req -x509 -newkey rsa:2048 -nodes -days 1 \
+  -keyout "$TEST_DIR/server.key" \
+  -out "$TEST_DIR/server.crt" \
+  -subj '/CN=netpro-rst.test'
+echo "Temporary certificate directory: $TEST_DIR"
+openssl s_server \
+  -accept 192.168.80.128:8443 \
+  -cert "$TEST_DIR/server.crt" \
+  -key "$TEST_DIR/server.key" \
+  -www -state -tls1_2
+```
+
+Before blocking, the client successfully completed TLS and received `HTTP/1.0 200 ok` from this listener.
+
+### Add the test policy and capture the reset
+
+On `policy-server-vm`, select TLS mode:
+
+```bash
+sudo systemctl stop netpro-policy
+sudo netpro-policy-mode tls
+sudo systemctl start netpro-policy
+systemctl is-active netpro-policy
+```
+
+On `backend-vm`, add a temporary policy for the test SNI and listener address. Save the ID returned by the API:
+
+```bash
+curl -k -sS -X POST https://127.0.0.1:3000/ps/blocked-list \
+  -H 'Content-Type: application/json' \
+  -d '{"name":"NetPro controlled RST test","domain":"netpro-rst.test","ip_add":"192.168.80.128","category":"Other"}'
+```
+
+Confirm that the policy reached Policy SQLite before testing:
+
+```bash
+sudo sqlite3 /home/ubuntu/NetPro-Policy-Server/policy.db \
+  "SELECT id, domain, ip_address FROM policies WHERE domain='netpro-rst.test';"
+```
+
+On the gateway, start a direction-specific capture in a second terminal:
+
+```bash
+sudo timeout 20 tcpdump -Q in -ni ens38 -e -nn -S -tt \
+  'dst host 192.168.80.128 and dst port 8443 and tcp[tcpflags] & tcp-rst != 0'
+```
+
+While it is listening, make one request from `netpro-test-client`:
+
+```bash
+curl --noproxy '*' \
+  --resolve 'netpro-rst.test:8443:192.168.80.128' \
+  -k -sS -i --connect-timeout 5 --max-time 10 \
+  https://netpro-rst.test:8443/
+```
+
+### Verified result and scope
+
+On 24 September 2026, the blocked client request failed with curl error 35 (`Recv failure: Connection reset by peer`). The inbound-only capture on gateway `ens38` showed RST packets from `192.168.80.129:<ephemeral-port>` to `192.168.80.128:8443`. Using `-Q in` distinguished packets arriving from the NetPro side from copies mirrored out of the client-facing interface. The OpenSSL server read each ClientHello, began writing the TLS handshake, and then reported `error in SSLv3/TLS write server done`. Together, the capture and server log show that the server-directed reset reached and interrupted the controlled endpoint's TCP/TLS connection.
+
+This confirms both reset directions in the controlled lab: the client sees the connection reset, and the server-side listener's handshake is interrupted. It does not prove that Google or another Internet server received or accepted a reset. A separate Google test captured a server-directed RST leaving the gateway's NAT-facing `ens33`; that established gateway egress only, not remote receipt.
+
+### Remove temporary test state
+
+Delete the temporary policy by its returned ID on `backend-vm`:
+
+```bash
+curl -k -sS -X DELETE \
+  https://127.0.0.1:3000/ps/blocked-list/POLICY_ID
+```
+
+Stop the foreground OpenSSL server with Ctrl+C. In its original shell, remove the short-lived key and certificate:
+
+```bash
+rm -f "$TEST_DIR/server.key" "$TEST_DIR/server.crt"
+rmdir "$TEST_DIR"
+```
+
+Restore HTTP mode on `policy-server-vm`:
+
+```bash
+sudo systemctl stop netpro-policy
+sudo netpro-policy-mode http
+sudo systemctl start netpro-policy
+systemctl is-active netpro-policy
+```
+
+Stop the test gateway setup and restore the previously-down NetPro-RX interface:
+
+```bash
+sudo /usr/local/sbin/netpro-test-gateway-stop
+sudo ip link set ens38 down
+sysctl net.ipv4.ip_forward
+```
+
+The gateway's forwarding value should return to its saved pre-test value (0 in this run). The client default route was not changed during this test.
+
 ## What is proven
 
 For a repeatable real-browser HTTPS check with a temporary pinned Google policy and no Policy restart during rollback, see [Repeatable live Google block/allow validation](repeatable-live-google-test.md).
