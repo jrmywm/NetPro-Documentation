@@ -19,6 +19,7 @@ Every VM guide has a reboot checkpoint. Do not advance to packet-path testing un
 - [Frontend chart and passive-capture design plan](frontend-chart-and-passive-capture-plan.md) - verified chart timestamp fix and capture/enforcement architecture decision
 - [Mirrored capture-branch independence demo](passive-capture-independence-demo.md) - measured up/down/up client test and limitations
 - [TRex reset-return MAC diagnosis](reset-return-mac-diagnosis-2026-10-02.md) - original/normalized receive captures and Policy telemetry comparison
+- [TRex profile MAC correction and mixed retest](trex-profile-mac-fix-2026-10-02.md) - corrected five profiles and controlled eight-second HTTP/TLS/UDP result
 - [Policy Server VM setup](policy-server-vm-setup.md) - historical two-port mode-switching setup and telemetry fix; retained as historical evidence
 - [Kafka Broker VM setup](kafka-broker-vm-setup.md) - verified
 - [NPB VM setup](npb-vm-setup.md) - HTTP and TLS classification verified

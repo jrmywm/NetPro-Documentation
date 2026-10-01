@@ -1,2 +1,5 @@
 assets/policy-three-port/* text eol=lf
 assets/policy-three-port/*.patch whitespace=-blank-at-eol,-space-before-tab
+scripts/trex-profile-mac-fix/* text eol=lf
+scripts/trex-profile-mac-fix/npb_testing*.py whitespace=-blank-at-eol
+evidence/trex-profile-mac-fix/telemetry-output.txt whitespace=-blank-at-eol

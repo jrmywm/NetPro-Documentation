@@ -62,7 +62,7 @@ The six service-VM NAT addresses are now applied and verified; see the [static-a
 
 The client received HTTP 200 with Gateway mirror `ens38` up, down, then up; NPB telemetry appeared in the connected phases and no request-matched row appeared while down. Cleanup returned the Gateway to `ip_forward=0`, `ens38` down, no demo filters/rules/timer, and the Client to its default route. This demonstrates mirror-branch independence only, not a physical TAP or Gateway-failure transparency; no PCAP was produced. Details are in the [demo record](passive-capture-independence-demo.md).
 
-The TRex receive test confirmed that temporary MAC normalization restored 100 TLS client-directed RSTs: the original profile returned 100 HTTP RSTs only, while the normalized profile returned 100 HTTP and 100 TLS RSTs. Policy accepted both 100-packet flows and generated 400 total client/server RSTs per case; server-directed resets were not expected at the TRex receive port. The test supports the stale TLS fixture-MAC diagnosis but was a TRex endpoint capture, not an independent wire capture or production fix. See the [reset-return MAC diagnosis](reset-return-mac-diagnosis-2026-10-02.md). No production source or fixture changed; TRex remains stopped.
+Five TRex profiles now use explicit MAC override arguments across nine streams; rates, timing, and payloads are unchanged. The eight-second mixed HTTP/TLS/UDP retest at 1,000 pps completed with TX 8,019, RX 4,010, and zero errors. Delayed telemetry totals showed 4,010 client RSTs, 4,010 server RSTs, and 8,020 Policy TX. This supports the client-return MAC diagnosis but does not prove server-directed delivery or loss-free higher-load behavior; no full mixed PCAP was captured. See the [profile correction and retest](trex-profile-mac-fix-2026-10-02.md) and the [original diagnostic](reset-return-mac-diagnosis-2026-10-02.md). NPB/Policy source and packet fixtures were unchanged; only generator test profiles changed. TRex remains stopped.
 
 ## Repository boundary
 
@@ -70,4 +70,4 @@ The upstream `Network-Laboratory-UI` component repositories must never be pushed
 
 ## Next verification
 
-1. Review a production-profile correction separately; the temporary normalized-MAC result is diagnostic only and changed no source or fixture.
+1. Server-directed RST delivery and higher-load loss behavior remain unverified.
