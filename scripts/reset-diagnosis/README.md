@@ -1,0 +1,5 @@
+# TRex reset-return MAC diagnostic helpers
+
+Environment-specific helpers for inspecting the two TRex PCAP fixtures and comparing original versus temporary normalized MAC behavior. Run only in a controlled TRex test window: `compare_mac_returns.py` acquires/resets ports 0 and 1 and sends two 100-packet streams for each case. It writes RST-only TRex receive captures under `/tmp` and does not edit production source or fixture files. The TLS fixture path is embedded for the current TRex v3.04 installation; edit it only when intentionally adapting the diagnostic to another installation.
+
+The helper imports the TRex API and Scapy from the Packet Generator environment. Run `inspect_fixture_macs.py` to print fixture/default MAC behavior; run `compare_mac_returns.py` for the two return cases. `telemetry-mac-comparison.sql` is read-only and filters Policy rows after packet ID `173055`. The detailed result and evidence links are in [the diagnosis record](../../docs/reset-return-mac-diagnosis-2026-10-02.md).

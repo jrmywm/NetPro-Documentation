@@ -62,7 +62,7 @@ The six service-VM NAT addresses are now applied and verified; see the [static-a
 
 The client received HTTP 200 with Gateway mirror `ens38` up, down, then up; NPB telemetry appeared in the connected phases and no request-matched row appeared while down. Cleanup returned the Gateway to `ip_forward=0`, `ens38` down, no demo filters/rules/timer, and the Client to its default route. This demonstrates mirror-branch independence only, not a physical TAP or Gateway-failure transparency; no PCAP was produced. Details are in the [demo record](passive-capture-independence-demo.md).
 
-Read-only profile inspection points to a likely TLS reset MAC mismatch: TLS and UDP profile flags `3` both preserve fixture MACs. The TLS fixture uses `cc:08:fa:6c:37:1e` → `34:1e:6b:04:66:bb` with IPs `192.168.100.174` → `152.118.24.175`; the UDP fixture uses `00:de:01:0a:01:00` → `00:50:56:80:0d:28`. HTTP flags `0` rewrite to configured TRex/NPB MACs (`00:0c:29:c5:4f:e8` / `00:0c:29:ba:d7:5a`). The client-directed TLS RST retains the fixture client MAC; the server-directed TLS RST targets fixture MAC `34:1e:6b:04:66:bb`, whereas HTTP uses configured NPB MAC `00:0c:29:ba:d7:5a`. This may explain why the observed 2,001 TRex receives are consistent with HTTP-only return despite 8,000 Policy accepts, but no wire capture or normalized-MAC retest has confirmed it. No fixture or production source was changed; TRex remains stopped.
+The TRex receive test confirmed that temporary MAC normalization restored 100 TLS client-directed RSTs: the original profile returned 100 HTTP RSTs only, while the normalized profile returned 100 HTTP and 100 TLS RSTs. Policy accepted both 100-packet flows and generated 400 total client/server RSTs per case; server-directed resets were not expected at the TRex receive port. The test supports the stale TLS fixture-MAC diagnosis but was a TRex endpoint capture, not an independent wire capture or production fix. See the [reset-return MAC diagnosis](reset-return-mac-diagnosis-2026-10-02.md). No production source or fixture changed; TRex remains stopped.
 
 ## Repository boundary
 
@@ -70,4 +70,4 @@ The upstream `Network-Laboratory-UI` component repositories must never be pushed
 
 ## Next verification
 
-1. Use a wire capture and controlled temporary normalized-MAC retest to confirm whether preserved fixture MACs explain the reset-return discrepancy; do not change the source or fixture.
+1. Review a production-profile correction separately; the temporary normalized-MAC result is diagnostic only and changed no source or fixture.

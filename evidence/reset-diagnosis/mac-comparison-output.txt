@@ -1,0 +1,11 @@
+Thu 01 Oct 2026 11:00:37 PM UTC
+original stream flags=0 src_override=default dst_override=default packet_mac=00:00:00:02:00:00>00:00:00:01:00:00 default_src_mac=True default_dst_mac=True sport_range=22001-22100
+original stream flags=3 src_override=default dst_override=default packet_mac=cc:08:fa:6c:37:1e>34:1e:6b:04:66:bb default_src_mac=False default_dst_mac=False sport_range=23001-23100
+original RST capture started: 1
+original RST capture saved: /tmp/netpro-mac-return-original-16025-1790895638065107894.pcap
+{"case": "original", "ports": {"0": {"ibytes": 6800, "ierrors": 0, "obytes": 70400, "oerrors": 0}, "1": {"ibytes": 0, "ierrors": 0, "obytes": 0, "oerrors": 0}}, "totals": {"ibytes": 6800, "ierrors": 0, "obytes": 70400, "oerrors": 0}}
+normalized stream flags=0 src_override=default dst_override=default packet_mac=00:00:00:02:00:00>00:00:00:01:00:00 default_src_mac=True default_dst_mac=True sport_range=23001-23100
+normalized stream flags=0 src_override=default dst_override=default packet_mac=cc:08:fa:6c:37:1e>34:1e:6b:04:66:bb default_src_mac=False default_dst_mac=False sport_range=24001-24100
+normalized RST capture started: 2
+normalized RST capture saved: /tmp/netpro-mac-return-normalized-16025-1790895640140755668.pcap
+{"case": "normalized", "ports": {"0": {"ibytes": 13600, "ierrors": 0, "obytes": 70400, "oerrors": 0}, "1": {"ibytes": 0, "ierrors": 0, "obytes": 0, "oerrors": 0}}, "totals": {"ibytes": 13600, "ierrors": 0, "obytes": 70400, "oerrors": 0}}
