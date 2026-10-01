@@ -30,10 +30,10 @@ This is the consolidated incident record for the verified NetPro lab build. The 
 | Hugepage setup reported pages still in use even though the process had stopped | Stale `/dev/hugepages/rtemap_*` mappings remained. | Confirmed no DPDK process was running, removed only the stale mappings, and restarted preparation. |
 | `Error: number of ports must be 3` | The message is misleading; DPDK saw no bound data ports after the NICs returned to `vmxnet3`. | Checked `dpdk-devbind.py -s` and rebound the required adapters. |
 | Policy PCI/interface mapping changed after VMware adapter repair | Removing or re-adding an adapter can change Linux names and PCI addresses. | Rediscovered the mapping and updated the local preparation helper. Never assume PCI addresses from another VM or an old snapshot. |
-| Policy reported misleading three-port requirement | The runtime accepts exactly two DPDK ports: selected input plus RST/output; an old error string says three. | Use HTTP `0b:00.0` + RST `1b:00.0`, or TLS `13:00.0` + RST `1b:00.0`. The local `netpro-policy-mode` helper controls the selection and writes `NETPRO_POLICY_MODE`. |
-| HTTP/TLS telemetry was assigned to nonexistent ports | `policyServer.c` hard-coded port 0 HTTP, port 1 TLS, port 2 output in CSV and `populate_json_stats()`. | Local commit `d658fa2 Fix two-port policy telemetry mapping` reads `NETPRO_POLICY_MODE`, reports only the selected protocol, and treats port 1 as RST/output. `aggregator.c` is legacy and is not the live sender. Keep this commit local unless separately reviewed. |
-| Policy telemetry mode can disagree with bindings after rebooting from TLS mode | The boot preparation script always restores the HTTP NIC pair, while `/etc/default/netpro-policy` retains its last value. | Before reboot, stop Policy and run `sudo netpro-policy-mode http`. If a mismatch already occurred, stop Policy, run the HTTP mode helper, and start Policy again before generating traffic. |
-| HTTP and TLS could not be monitored simultaneously | The current Policy source polls application port 0 and uses port 1 for RST output. | Keep separate selectable HTTP/TLS runs; the telemetry fix does not add a second input. HTTP is restored at boot by the preparation service. |
+| Historical two-port build reported a misleading three-port requirement | That runtime accepted exactly two DPDK ports: selected input plus RST/output; an old error string said three. | This was superseded by the current three-port build: HTTP input `0b:00.0`, TLS input `13:00.0`, and RST output `1b:00.0` operate concurrently. See the [current three-port runbook](policy-three-port-upgrade.md). |
+| Historical two-port HTTP/TLS telemetry was assigned to nonexistent ports | That `policyServer.c` hard-coded port 0 HTTP, port 1 TLS, port 2 output in CSV and `populate_json_stats()`. | Local commit `d658fa2 Fix two-port policy telemetry mapping` addressed the then-current two-port mode. It is historical and superseded by the three-port implementation. `aggregator.c` is legacy and is not the live sender. |
+| Historical two-port Policy telemetry mode could disagree with bindings after rebooting from TLS mode | The old boot preparation script restored the HTTP NIC pair while `/etc/default/netpro-policy` retained its last value. | The current three-port preparation binds both protocol inputs and dedicated RST output; no HTTP/TLS mode selection is required. |
+| Historical two-port build could not monitor HTTP and TLS simultaneously | Its Policy source polled application port 0 and used port 1 for RST output. | The current three-port build polls HTTP and TLS inputs concurrently and sends reset traffic on the dedicated output. Mixed traffic was verified before and after Policy VM reboot; see the [three-port runbook](policy-three-port-upgrade.md). |
 
 ## Kafka issues
 
@@ -48,7 +48,7 @@ This is the consolidated incident record for the verified NetPro lab build. The 
 | Obstacle | Cause | Resolution |
 | --- | --- | --- |
 | NPB reported all-zero RX counters while TRex transmitted | The problem was the virtual path, not packet generation. | Verified `NetPro-RX` membership and adapter connection state, then used kernel `tcpdump` and DPDK `testpmd` to prove frames reached NPB PCI `0000:0b:00.0`. |
-| Traffic reached NPB but Policy initially received nothing | The HTTP/TLS/RST VMware LAN-segment assignments and Policy input binding did not match the active test. | Standardized `NetPro-RX`, `NetPro-HTTP`, and `NetPro-TLS`; Policy RST output shares `NetPro-RX`. Selected the matching Policy mode before each test. |
+| Traffic reached NPB but Policy initially received nothing | The HTTP/TLS/RST VMware LAN-segment assignments and Policy input binding did not match the active test. | Standardized `NetPro-RX`, `NetPro-HTTP`, and `NetPro-TLS`; Policy RST output shares `NetPro-RX`. Current three-port operation keeps both input NICs and the reset output bound at once. |
 | TRex reported `Port 0 dest MAC is invalid` | Its generated configuration had no explicit Layer-2 destination. | Regenerated `/etc/trex_cfg.yaml` with the current NPB RX MAC. The value must be rediscovered if VMware regenerates the NIC. |
 | TRex port 1 showed no traffic | The repository HTTP/TLS scripts transmit on port 0; port 1 exists only because this TRex configuration requires a pair. | Treated idle port 1 as expected, not a failure. |
 | `stl_path.py` could not locate profiles | TRex v3.04's packaged directory layout differs from what the Packet Generator repository expects. | Added the local `automation/stl` and `automation/external_libs` compatibility links and set `PYTHONPATH`. |
@@ -82,14 +82,14 @@ Generated configuration files, certificates, private keys, passwords, VM files, 
 
 ## Rebuild recovery and rollback notes
 
-- If Policy does not start after reboot, stop `netpro-policy`, check `netpro-dpdk-prepare`, hugepages, and `dpdk-devbind.py -s`, then restore HTTP mode with `sudo netpro-policy-mode http` before starting the unit.
-- If a mode switch is attempted while Policy is running, stop the unit first. The helper intentionally refuses a live rebind; this protects the process from a half-bound pair.
+- If Policy does not start after reboot, stop `netpro-policy`, check `netpro-dpdk-prepare`, hugepages, and `dpdk-devbind.py -s`; verify current three-port bindings against [the runbook](policy-three-port-upgrade.md).
+- Mode-switch recovery commands in the [historical two-port guide](policy-server-vm-setup.md) apply only to a VM actually running that older build. Current three-port operation needs no HTTP/TLS mode switch.
 - If telemetry rows are missing, verify the Backend certificate trust and wait at least 70 seconds after traffic; the sender posts once per minute. Compare rows newer than a recorded `MAX(packet_id)` baseline.
 - If TRex RPC fails, confirm it is listening on 4500/4501 before changing Python or PCAP files.
 - To roll back local source deviations, stop the affected service and restore the separately saved pre-change source/binary; never delete active builds or `*.before-*` backups without first identifying them.
 
 ## Still pending
 
-- Validate mixed HTTP, TLS, and UDP workloads after deciding how to schedule the Policy Server's selectable input modes.
-- Review the two local source commits as proper source changes before any upstream push.
+- Rerun mixed HTTP, TLS, and UDP traffic against the latest segmented-ClientHello build; the earlier mixed-traffic result predates that build.
+- Review local source deviations before any separately authorized personal-fork handoff. Never push component changes to the upstream `Network-Laboratory-UI` repositories.
 - Decide which screenshots, PCAPs, and result files should be retained as formal test evidence.

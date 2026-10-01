@@ -56,9 +56,9 @@ DHCP/NAT addresses can change. The `192.168.0.90`–`192.168.0.95` secondary add
 | Segment | Connects | Purpose |
 | --- | --- | --- |
 | `NetPro-RX` | Packet Generator, NPB input, and Policy RST output | Generated traffic entering the NPB and reset frames returning to TRex |
-| `NetPro-HTTP` | NPB HTTP output → Policy HTTP NIC (`0b:00.0`) | HTTP GET traffic; this NIC becomes Policy DPDK port 0 in HTTP mode |
-| `NetPro-TLS` | NPB TLS output → Policy TLS NIC (`13:00.0`) | TLS Client Hello traffic; this NIC becomes Policy DPDK port 0 in TLS mode |
-| `NetPro-PG-AUX` | Packet Generator port 1 only | Unused second TRex port required by the two-port TRex configuration |
+| `NetPro-HTTP` | NPB HTTP output → Policy HTTP NIC (`0b:00.0`) | HTTP GET input, active concurrently with TLS input |
+| `NetPro-TLS` | NPB TLS output → Policy TLS NIC (`13:00.0`) | TLS ClientHello input, active concurrently with HTTP input |
+| `NetPro-PG-AUX` | Packet Generator port 1 only | Unused second TRex port required by the current two-port TRex configuration |
 
 The management adapter on every VM uses VMware NAT and must not be bound to DPDK.
 
@@ -75,7 +75,7 @@ Recommended full-lab startup order:
 1. Start `Kafka-Broker-VM`; its ZooKeeper and Kafka services start automatically.
 2. Start `Backend-VM`; PostgreSQL and `netpro-backend` start automatically.
 3. Start `Frontend-VM`; `netpro-frontend` starts automatically.
-4. Start `Policy-Server-VM`; `netpro-dpdk-prepare` restores the default HTTP bindings and `netpro-policy` starts the Policy application automatically. Stop the unit before selecting TLS mode.
+4. Start `Policy-Server-VM`; `netpro-dpdk-prepare` binds the HTTP input, TLS input, and dedicated RST output, and `netpro-policy` starts automatically. No protocol mode selection is needed.
 5. Start `NPB-VM`; `netpro-npb-dpdk-prepare` and `netpro-npb` prepare the three DPDK ports and launch the NPB automatically.
 6. Start the Packet Generator last so packets are not sent before consumers are ready.
 
@@ -201,18 +201,18 @@ Record the machine-local location and backup status in a private inventory, but 
 
 HTTP and TLS policy enforcement have been verified with the repository traffic profiles:
 
-The diagram and counts below record the historical two-port sequential tests. The current three-port result is summarized immediately afterward.
+The diagram and counts below record the historical two-port sequential tests. They are retained as historical evidence; they do not describe the current port layout.
 
 ```text
 TRex port 0 → NetPro-RX → NPB port 0
-NPB HTTP classification → NPB port 1 → NetPro-HTTP → Policy Server port 0
-NPB TLS classification  → NPB port 2 → NetPro-TLS  → Policy Server port 0 (TLS mode)
-Policy Server port 1 → NetPro-RX → TRex port 0
+NPB HTTP classification → NPB port 1 → NetPro-HTTP → Policy port 0
+NPB TLS classification  → NPB port 2 → NetPro-TLS  → Policy port 0 (TLS mode)
+Policy port 1 → NetPro-RX → TRex port 0
 ```
 
 The HTTP test matched `facebook.co.id` at `48.0.0.1`. The TLS test matched SNI `www.ui.ac.id` at `152.118.24.175:443`. In each test, the NPB classified and forwarded approximately 1,000 requests per active interval; the Policy Server blocked matching requests and emitted client- and server-directed RST frames with zero reported interface errors. The TLS run ended with 8,016 TRex transmissions and 16,032 received RST frames.
 
-The earlier Policy build used two DPDK ports and selectable HTTP/TLS modes; those setup details remain in the [historical VM guide](docs/policy-server-vm-setup.md) and [historical end-to-end procedure](docs/end-to-end-http-validation.md). The current local build is commit `e75c9f2`: HTTP and TLS inputs are polled concurrently on `0b:00.0` and `13:00.0`, and both reset directions leave through `1b:00.0`. The mixed test recorded approximately 250 packets per second for each input, with approximately 500 client and 500 server RSTs per second. The same behavior was verified after rebooting the Policy VM; see the [current three-port runbook](docs/policy-three-port-upgrade.md).
+The earlier Policy build used two DPDK ports and selectable HTTP/TLS modes; those setup details remain in the [historical VM guide](docs/policy-server-vm-setup.md) and [historical end-to-end procedure](docs/end-to-end-http-validation.md). The three-port baseline is commit `e75c9f2`; subsequent Policy commit `c936484` adds TLS ClientHello reassembly for SNI, and the current VM services use `split-clienthello-shared` binaries. HTTP and TLS inputs are polled concurrently on `0b:00.0` and `13:00.0`, and both reset directions leave through `1b:00.0`. The mixed test recorded approximately 250 packets per second for each input, with approximately 500 client and 500 server RSTs per second. The same behavior was verified after rebooting the Policy VM; see the [current three-port runbook](docs/policy-three-port-upgrade.md). The later segmented-ClientHello milestone and pending normal-build check are in the [engineering checkpoint](docs/engineering-checkpoint-2026-10-01.md).
 
 The application control path is also verified:
 
@@ -227,11 +227,11 @@ The Frontend HTTPS dashboard was verified from the Windows host. Registration an
 
 ## Powered-off cold-start acceptance
 
-The following 19 September 2026 results are for the earlier two-port Policy build. The current three-port Policy VM was rebooted and validated separately on 25 September 2026; see the [three-port runbook](docs/policy-three-port-upgrade.md).
+The following 19 September 2026 results are for the earlier two-port Policy build and are historical. In particular, its TLS run required selecting TLS mode and then restoring HTTP mode. The current three-port Policy VM was rebooted and validated separately on 25 September 2026; it handles both inputs concurrently without mode switching. See the [three-port runbook](docs/policy-three-port-upgrade.md).
 
 On 19 September 2026, all six VMs were powered off cleanly and restarted. Kafka/ZooKeeper were active on ports `2181`/`9092`; Backend/PostgreSQL were active and `HTTPS /ps/blocked-list` returned `200` with persisted data; and Frontend was active on port `3005`, with login working and NPB and Policy shown as **Active** on the dashboard. NPB preparation/service was active with 2 GB hugepages and DPDK PCI `0b:00.0`, `13:00.0`, and `1b:00.0`. Policy preparation/service was active with 2 GB hugepages, boot-safe HTTP bindings `0b:00.0` + `1b:00.0`, and kernel-managed `13:00.0`. TRex was manually started with ports `4500`/`4501` listening.
 
-The cold-start HTTP run (`npb_testing_http.py`, size `256`, 1,000 pps) passed with approximately 3,000 NPB input packets, 1,000 HTTP matches/forwarded packets, 2,000 no-match packets, approximately 1,000 Policy HTTP input packets, 1,000 client and 1,000 server RSTs, output RX/TX near 1,000/2,000, and nonzero HTTP/output throughput. The TLS run (`npb_testing_https.py`, size `583`, 1,000 pps) passed after safely switching Policy to TLS mode: NPB reported approximately 1,000 HTTPS matches and TLS-forwarded packets, and Policy reported approximately 1,000 TLS input packets, 1,000 client and 1,000 server RSTs, output RX/TX near 1,000/2,000, and nonzero TLS/output throughput. Policy was restored to boot-safe HTTP mode and confirmed active. One- or two-packet differences are normal sampling variation. Snapshots are being created after this consistent powered-off state and are not yet claimed complete.
+The cold-start HTTP run (`npb_testing_http.py`, size `256`, 1,000 pps) passed with approximately 3,000 NPB input packets, 1,000 HTTP matches/forwarded packets, 2,000 no-match packets, approximately 1,000 Policy HTTP input packets, 1,000 client and 1,000 server RSTs, output RX/TX near 1,000/2,000, and nonzero HTTP/output throughput. The TLS run (`npb_testing_https.py`, size `583`, 1,000 pps) passed on the earlier selectable-mode build after switching Policy to TLS mode, then restoring boot-safe HTTP mode. This is historical evidence, not the current operating procedure. One- or two-packet differences are normal sampling variation. Snapshots are being created after this consistent powered-off state and are not yet claimed complete.
 
 ## Documentation status
 
@@ -247,4 +247,4 @@ The cold-start HTTP run (`npb_testing_http.py`, size `256`, 1,000 pps) passed wi
 
 ## Local source and runtime boundary
 
-The lab record includes machine-local source changes: Policy commit `d658fa2 Fix two-port policy telemetry mapping`, its superseding three-port commit `e75c9f2`, and Backend commit `bd3c3fc Enable device heartbeat status checks`. They document verified lab state, not instructions to push upstream. Three-port Policy startup and mixed traffic were verified after reboot on 25 September 2026. Keep runtime copies of `/etc/systemd/system` units, `/etc/default/netpro-policy`, and `/usr/local/sbin` helpers, along with generated configs, certificates and private keys, databases, logs, binaries, captures, and `*.before-*` backups out of Git. The versioned source and helper assets in this documentation repository are rebuild templates, not VM runtime state.
+The lab record includes machine-local source changes: Policy commit `d658fa2 Fix two-port policy telemetry mapping` (historical), its superseding three-port commit `e75c9f2`, and Backend commit `bd3c3fc Enable device heartbeat status checks`. Later segmented-ClientHello changes are recorded in the [engineering checkpoint](docs/engineering-checkpoint-2026-10-01.md). They document lab state, not instructions to push upstream. Three-port Policy startup and mixed traffic were verified after reboot on 25 September 2026. Keep runtime copies of `/etc/systemd/system` units, `/etc/default/netpro-policy`, and `/usr/local/sbin` helpers, along with generated configs, certificates and private keys, databases, logs, binaries, captures, and `*.before-*` backups out of Git. The versioned source and helper assets in this documentation repository are rebuild templates, not VM runtime state.
