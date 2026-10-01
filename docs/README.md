@@ -17,6 +17,7 @@ Every VM guide has a reboot checkpoint. Do not advance to packet-path testing un
 - [Current three-port Policy Server runbook](policy-three-port-upgrade.md) - concurrent HTTP/TLS processing and mixed-traffic telemetry verified before and after Policy VM reboot
 - [Current engineering checkpoint and validation status](engineering-checkpoint-2026-10-01.md) - segmented TLS ClientHello live result, offline regression passed, normal component builds pending, and source/runtime boundary
 - [Frontend chart and passive-capture design plan](frontend-chart-and-passive-capture-plan.md) - verified chart timestamp fix and capture/enforcement architecture decision
+- [Mirrored capture-branch independence demo](passive-capture-independence-demo.md) - measured up/down/up client test and limitations
 - [Policy Server VM setup](policy-server-vm-setup.md) - historical two-port mode-switching setup and telemetry fix; retained as historical evidence
 - [Kafka Broker VM setup](kafka-broker-vm-setup.md) - verified
 - [NPB VM setup](npb-vm-setup.md) - HTTP and TLS classification verified

@@ -41,10 +41,33 @@ The offline regression harness completed with exit code 0: six parser scenarios 
 
 Four frontend chart tests passed and the test process exited successfully. `npm run build` exited successfully with existing dependency and lint warnings, and `netpro-frontend` is active. The frontend source change is local commit `e4a947a`.
 
+## VM network identity and static addressing — 2 October 2026
+
+An initial check reported two VMs with the same Linux machine-id (`cf5c76ab092042a6b98fa7ee449eb8e7`) despite different MAC addresses, and duplicate DHCP assignments/conflicts were observed for `192.168.31.138` and `192.168.80.132`. A follow-up audit verified unique IDs for the six core service VMs; the separate Gateway/Client pair still share the reported machine-id. VMware's DHCP pool covers `.128`–`.254` on both subnets.
+
+Static IPv4 configuration is now applied with `/24` masks: NAT addresses are on `ens33`, lab-link addresses are on `ens37`, and default gateway/DNS `192.168.31.2` is on `ens33` only:
+
+| VM | `ens33` NAT address | `ens37` lab-link address | Default gateway and DNS on `ens33` |
+| --- | --- | --- | --- |
+| Gateway | `192.168.31.37/24` | `192.168.80.28/24` | `192.168.31.2` |
+| Client | `192.168.31.39/24` | `192.168.80.29/24` | `192.168.31.2` |
+
+Validation passed: both VMs pinged `1.1.1.1`, resolved `example.com`, and the gateway pinged the client's `192.168.80.29` address. No automatic rollback timers remain. Cloud-init network generation is disabled through `99-netpro-disable-network-config.cfg`; original configuration files are preserved in `/var/tmp/netpro-static.3u3z9r` on the gateway and `/var/tmp/netpro-static.9GqRLs` on the client. A second duplicate-client backup exists at `/var/tmp/netpro-static.lRsxfk`; the original client backup is `9GqRLs`.
+
+The address configuration has not been reboot-tested. Existing proxy and test references may still point at the old addresses and must be updated before use. Tinyproxy was inactive during this change.
+
+The six service-VM NAT addresses are now applied and verified; see the [static-addressing audit and migration record](static-addressing-2026-10-02.md). Their reboot persistence remains unverified.
+
+## Passive capture and reset-return findings — 2 October Taipei
+
+The client received HTTP 200 with Gateway mirror `ens38` up, down, then up; NPB telemetry appeared in the connected phases and no request-matched row appeared while down. Cleanup returned the Gateway to `ip_forward=0`, `ens38` down, no demo filters/rules/timer, and the Client to its default route. This demonstrates mirror-branch independence only, not a physical TAP or Gateway-failure transparency; no PCAP was produced. Details are in the [demo record](passive-capture-independence-demo.md).
+
+Read-only profile inspection points to a likely TLS reset MAC mismatch: TLS and UDP profile flags `3` both preserve fixture MACs. The TLS fixture uses `cc:08:fa:6c:37:1e` → `34:1e:6b:04:66:bb` with IPs `192.168.100.174` → `152.118.24.175`; the UDP fixture uses `00:de:01:0a:01:00` → `00:50:56:80:0d:28`. HTTP flags `0` rewrite to configured TRex/NPB MACs (`00:0c:29:c5:4f:e8` / `00:0c:29:ba:d7:5a`). The client-directed TLS RST retains the fixture client MAC; the server-directed TLS RST targets fixture MAC `34:1e:6b:04:66:bb`, whereas HTTP uses configured NPB MAC `00:0c:29:ba:d7:5a`. This may explain why the observed 2,001 TRex receives are consistent with HTTP-only return despite 8,000 Policy accepts, but no wire capture or normalized-MAC retest has confirmed it. No fixture or production source was changed; TRex remains stopped.
+
 ## Repository boundary
 
 The upstream `Network-Laboratory-UI` component repositories must never be pushed. The personal `jrmywm` documentation repository exists. The three personal component repositories do not currently exist; their creation or use is pending a user decision. Local commit identifiers in this checkpoint document lab state and do not authorize publishing component changes.
 
 ## Next verification
 
-1. Investigate the difference between Policy output counters and TRex receive counters, including the destination MAC/return path.
+1. Use a wire capture and controlled temporary normalized-MAC retest to confirm whether preserved fixture MACs explain the reset-return discrepancy; do not change the source or fixture.
