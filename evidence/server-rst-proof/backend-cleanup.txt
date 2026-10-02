@@ -1,0 +1,16 @@
+Unit netpro-server-rst-proof-listener.service was already auto-collected; clearing its owned state
+Stopped only netpro-server-rst-proof-listener.service; retained evidence directory: /tmp/netpro-server-rst-proof.uB9WlN
+active
+active
+ id | domain | ip_add 
+----+--------+--------
+(0 rows)
+
+ npb_packet_baseline 
+---------------------
+              205379
+(1 row)
+ policy_packet_baseline 
+------------------------
+                 203004
+(1 row)

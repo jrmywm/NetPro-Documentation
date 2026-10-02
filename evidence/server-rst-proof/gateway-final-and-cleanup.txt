@@ -1,0 +1,64 @@
+ens33            UP             00:0c:29:34:73:c2 <BROADCAST,MULTICAST,UP,LOWER_UP> 
+ens37            UP             00:0c:29:34:73:cc <BROADCAST,MULTICAST,UP,LOWER_UP> 
+ens38            UP             00:0c:29:34:73:d6 <BROADCAST,MULTICAST,PROMISC,UP,LOWER_UP> 
+ip_forward=1 rp_filter(all/ens38)=0/0 state=active
+filter protocol ip pref 5 flower chain 0 
+filter protocol ip pref 5 flower chain 0 handle 0x32 
+  eth_type ipv4
+  ip_proto tcp
+  dst_ip 192.168.31.35
+  src_ip 192.168.80.29
+  dst_port 8443
+  tcp_flags 0x4/4
+  not_in_hw
+	action order 1: gact action drop
+	 random type none pass val 0
+	 index 1 ref 1 bind 1 installed 594 sec used 594 sec
+	Action statistics:
+	Sent 0 bytes 0 pkt (dropped 0, overlimits 0 requeues 0) 
+	backlog 0b 0p requeues 0
+
+filter protocol ip pref 10 flower chain 0 
+filter protocol ip pref 10 flower chain 0 handle 0x64 
+  eth_type ipv4
+  ip_proto tcp
+  dst_ip 192.168.31.35
+  src_ip 192.168.80.29
+  dst_port 8443
+  not_in_hw
+	action order 1: mirred (Egress Mirror to device ens38) pipe
+	index 1 ref 1 bind 1 installed 594 sec used 48 sec firstused 579 sec
+	Action statistics:
+	Sent 4993 bytes 48 pkt (dropped 0, overlimits 0 requeues 0) 
+	backlog 0b 0p requeues 0
+
+filter protocol ip pref 10 flower chain 0 
+filter protocol ip pref 10 flower chain 0 handle 0x6e 
+  eth_type ipv4
+  ip_proto tcp
+  dst_ip 192.168.31.35
+  src_ip 192.168.80.29
+  dst_port 8443
+  tcp_flags 0x4/4
+  not_in_hw
+	action order 1: skbedit  ptype host pass
+	 index 1 ref 1 bind 1 installed 594 sec used 104 sec firstused 443 sec
+	Action statistics:
+	Sent 184 bytes 4 pkt (dropped 0, overlimits 0 requeues 0) 
+	backlog 0b 0p requeues 0
+
+filter protocol all pref 20 matchall chain 0 
+filter protocol all pref 20 matchall chain 0 handle 0x78 
+  not_in_hw (rule hit 4)
+	action order 1: gact action drop
+	 random type none pass val 0
+	 index 2 ref 1 bind 1 installed 594 sec used 104 sec firstused 443 sec
+	Action statistics:
+	Sent 184 bytes 4 pkt (dropped 4, overlimits 0 requeues 0) 
+	backlog 0b 0p requeues 0
+
+-A FORWARD -s 192.168.31.35/32 -d 192.168.80.29/32 -i ens33 -o ens37 -p tcp -m tcp --sport 8443 -m conntrack --ctstate RELATED,ESTABLISHED -m comment --comment netpro-server-rst-proof -j ACCEPT
+-A FORWARD -s 192.168.80.29/32 -d 192.168.31.35/32 -i ens38 -o ens33 -p tcp -m tcp --dport 8443 -m comment --comment netpro-server-rst-proof -j ACCEPT
+-A FORWARD -s 192.168.80.29/32 -d 192.168.31.35/32 -i ens37 -o ens33 -p tcp -m tcp --dport 8443 -m comment --comment netpro-server-rst-proof -j ACCEPT
+-A POSTROUTING -s 192.168.80.29/32 -d 192.168.31.35/32 -o ens33 -p tcp -m tcp --dport 8443 -m comment --comment netpro-server-rst-proof -j MASQUERADE
+RST proof path stopped; owned rules removed and sysctl/link state restored.

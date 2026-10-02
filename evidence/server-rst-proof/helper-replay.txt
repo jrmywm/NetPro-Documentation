@@ -1,0 +1,8 @@
+Started scoped server-RST proof path. ens37 drops client RSTs and mirrors only client→server TCP/8443 to ens38; ens38 admits only matching server-directed RSTs. Auto-stop in 10 minutes.
+192.168.31.35 from 192.168.80.29 dev ens33 
+    cache iif ens38 
+RST proof path stopped; owned rules removed and sysctl/link state restored.
+net.ipv4.ip_forward = 0
+net.ipv4.conf.all.rp_filter = 2
+net.ipv4.conf.ens38.rp_filter = 2
+ens38            DOWN           00:0c:29:34:73:d6 <BROADCAST,MULTICAST> 

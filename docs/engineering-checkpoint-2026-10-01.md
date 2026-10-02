@@ -70,4 +70,4 @@ The upstream `Network-Laboratory-UI` component repositories must never be pushed
 
 ## Next verification
 
-1. Server-directed RST delivery and higher-load loss behavior remain unverified.
+1. The controlled server-directed RST VM-path proof and cleanup health checks are recorded in the [2 October report](server-directed-rst-proof-2026-10-02.md). High-load loss behavior and client-side RST delivery remain unverified.

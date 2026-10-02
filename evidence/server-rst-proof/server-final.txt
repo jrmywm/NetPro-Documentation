@@ -1,0 +1,39 @@
+Oct 02 14:07:55 backend-vm openssl[20830]: SSL_accept:before SSL initialization
+Oct 02 14:07:55 backend-vm openssl[20830]: SSL_accept:before SSL initialization
+Oct 02 14:07:55 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS read client hello
+Oct 02 14:07:55 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS write server hello
+Oct 02 14:07:55 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS write certificate
+Oct 02 14:07:55 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS write key exchange
+Oct 02 14:07:55 backend-vm openssl[20830]: SSL_accept:error in SSLv3/TLS write server done
+Oct 02 14:09:06 backend-vm openssl[20830]: SSL_accept:before SSL initialization
+Oct 02 14:09:06 backend-vm openssl[20830]: SSL_accept:before SSL initialization
+Oct 02 14:09:06 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS read client hello
+Oct 02 14:09:06 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS write server hello
+Oct 02 14:09:06 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS write certificate
+Oct 02 14:09:06 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS write key exchange
+Oct 02 14:09:06 backend-vm openssl[20830]: SSL_accept:error in SSLv3/TLS write server done
+Oct 02 14:10:02 backend-vm openssl[20830]: SSL_accept:before SSL initialization
+Oct 02 14:10:02 backend-vm openssl[20830]: SSL_accept:before SSL initialization
+Oct 02 14:10:02 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS read client hello
+Oct 02 14:10:02 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS write server hello
+Oct 02 14:10:02 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS write certificate
+Oct 02 14:10:02 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS write key exchange
+Oct 02 14:10:02 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS write server done
+Oct 02 14:10:02 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS write server done
+Oct 02 14:10:02 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS read client key exchange
+Oct 02 14:10:02 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS read change cipher spec
+Oct 02 14:10:02 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS read finished
+Oct 02 14:10:02 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS write change cipher spec
+Oct 02 14:10:02 backend-vm openssl[20830]: SSL_accept:SSLv3/TLS write finished
+Oct 02 14:10:02 backend-vm openssl[20830]: SSL3 alert write:warning:close notify
+Oct 02 14:10:02 backend-vm openssl[20830]: SSL3 alert read:warning:close notify
+Oct 02 14:10:08 backend-vm systemd[1]: netpro-server-rst-proof-listener.service: Service reached runtime time limit. Stopping.
+Oct 02 14:10:08 backend-vm systemd[1]: netpro-server-rst-proof-listener.service: Failed with result 'timeout'.
+1790950146.042327 IP 192.168.31.37.40726 > 192.168.31.35.8443: Flags [S], seq 2684819330, win 64240, options [mss 1460,sackOK,TS val 2890243146 ecr 0,nop,wscale 7], length 0
+1790950146.042405 IP 192.168.31.35.8443 > 192.168.31.37.40726: Flags [S.], seq 319571270, ack 2684819331, win 65160, options [mss 1460,sackOK,TS val 1394762318 ecr 2890243146,nop,wscale 7], length 0
+1790950146.044653 IP 192.168.31.37.40726 > 192.168.31.35.8443: Flags [.], ack 319571271, win 502, options [nop,nop,TS val 2890243149 ecr 1394762318], length 0
+1790950146.049698 IP 192.168.31.37.40726 > 192.168.31.35.8443: Flags [P.], seq 2684819331:2684819563, ack 319571271, win 502, options [nop,nop,TS val 2890243154 ecr 1394762318], length 232
+1790950146.049792 IP 192.168.31.35.8443 > 192.168.31.37.40726: Flags [.], ack 2684819563, win 508, options [nop,nop,TS val 1394762326 ecr 2890243154], length 0
+1790950146.050210 IP 192.168.31.37.40726 > 192.168.31.35.8443: Flags [R], seq 2684819563, win 502, length 0
+1790950151.045917 IP 192.168.31.37.40726 > 192.168.31.35.8443: Flags [F.], seq 2684819563, ack 319571271, win 502, options [nop,nop,TS val 2890248148 ecr 1394762326], length 0
+1790950151.045989 IP 192.168.31.35.8443 > 192.168.31.37.40726: Flags [R], seq 319571271, win 0, length 0
