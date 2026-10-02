@@ -1,0 +1,21 @@
+netpro-virtual-tap
+lo               UNKNOWN        127.0.0.1/8 
+ens33            UP             192.168.31.38/24 
+active
+Rollback timer canceled; backup retained. Static SSH verification acknowledged.
+state=installed mirror_service=active rollback_timer=inactive
+ens33            UP             192.168.31.38/24 
+br-tap           UP             96:6f:07:4b:bf:b5 <BROADCAST,MULTICAST,UP,LOWER_UP> 
+ens34            UP             00:0c:29:da:93:12 <BROADCAST,MULTICAST,UP,LOWER_UP> 
+ens35            UP             00:0c:29:da:93:1c <BROADCAST,MULTICAST,UP,LOWER_UP> 
+ens36            DOWN           00:0c:29:da:93:26 <NO-CARRIER,BROADCAST,MULTICAST,UP> 
+default via 192.168.31.2 dev ens33 proto static 
+192.168.31.0/24 dev ens33 proto kernel scope link src 192.168.31.38 
+PING 192.168.31.2 (192.168.31.2) 56(84) bytes of data.
+64 bytes from 192.168.31.2: icmp_seq=1 ttl=128 time=0.467 ms
+64 bytes from 192.168.31.2: icmp_seq=2 ttl=128 time=0.478 ms
+
+--- 192.168.31.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1060ms
+rtt min/avg/max/mdev = 0.467/0.472/0.478/0.005 ms
+172.66.147.243  STREAM example.com

@@ -21,6 +21,7 @@ Every VM guide has a reboot checkpoint. Do not advance to packet-path testing un
 - [TRex reset-return MAC diagnosis](reset-return-mac-diagnosis-2026-10-02.md) - original/normalized receive captures and Policy telemetry comparison
 - [TRex profile MAC correction and mixed retest](trex-profile-mac-fix-2026-10-02.md) - corrected five profiles and controlled eight-second HTTP/TLS/UDP result
 - [Server-directed RST proof](server-directed-rst-proof-2026-10-02.md) - controlled routed-backend capture confirms server-directed reset path; bounded VM test only
+- [Virtual TAP VM setup](virtual-tap-setup-2026-10-03.md) - software bridge installed and isolated mirror smoke-tested; VMware wiring and end-to-end traffic remain pending
 - [Policy Server VM setup](policy-server-vm-setup.md) - historical two-port mode-switching setup and telemetry fix; retained as historical evidence
 - [Kafka Broker VM setup](kafka-broker-vm-setup.md) - verified
 - [NPB VM setup](npb-vm-setup.md) - HTTP and TLS classification verified

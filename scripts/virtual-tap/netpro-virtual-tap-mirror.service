@@ -1,0 +1,12 @@
+[Unit]
+Description=Isolated passive mirror for the NetPro virtual TAP
+After=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/libexec/netpro-virtual-tap/mirror.sh start
+ExecStop=/usr/local/libexec/netpro-virtual-tap/mirror.sh stop
+
+[Install]
+WantedBy=multi-user.target

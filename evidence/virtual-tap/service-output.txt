@@ -1,0 +1,12 @@
+18: br-tap: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+active
+enabled
+3: ens34: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master br-tap state forwarding priority 32 cost 5 
+4: ens35: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master br-tap state forwarding priority 32 cost 5 
+ens34
+	action order 1: mirred (Egress Mirror to device ens36) pipe
+ens35
+	action order 1: mirred (Egress Mirror to device ens36) pipe
+ens36
+	action order 1: gact action drop
+net.ipv4.ip_forward = 0

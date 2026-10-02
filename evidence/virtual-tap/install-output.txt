@@ -1,0 +1,6 @@
+scripts-syntax-PASS
+ARPING 192.168.31.38 from 0.0.0.0 ens33
+Sent 3 probes (3 broadcast(s))
+Received 0 response(s)
+Install queued via systemd. Verify a new SSH session on 192.168.31.38, then run: NETPRO_STATIC_SSH_VERIFIED=1 /usr/local/libexec/netpro-virtual-tap/setup.sh confirm. Otherwise rollback starts automatically in 3 minutes.
+Backup: /var/tmp/netpro-virtual-tap.GwWPvi

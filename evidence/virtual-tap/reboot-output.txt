@@ -1,0 +1,18 @@
+netpro-virtual-tap
+2026-10-02 16:08:15
+lo               UNKNOWN        127.0.0.1/8 
+ens33            UP             192.168.31.38/24 
+default via 192.168.31.2 dev ens33 proto static 
+192.168.31.0/24 dev ens33 proto kernel scope link src 192.168.31.38 
+active
+active
+enabled
+3: ens34: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master br-tap state learning priority 32 cost 5 
+4: ens35: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master br-tap state learning priority 32 cost 5 
+ens34
+	action order 1: mirred (Egress Mirror to device ens36) pipe
+ens35
+	action order 1: mirred (Egress Mirror to device ens36) pipe
+ens36
+	action order 1: gact action drop
+inactive

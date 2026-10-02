@@ -1,0 +1,3 @@
+PASS: endpoint ping and TC mirror capture (4 ICMP packets)
+PASS: endpoint ping remains functional with mirror filters removed; monitor saw no ICMP
+PASS: endpoint ping remains functional after mirror filters were re-added
