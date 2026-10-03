@@ -1,0 +1,4 @@
+phase=blocked attempt=1 time=2026-10-02T16:44:08Z http=200 remote=192.168.80.28 seconds=0.018764 curl_exit=0
+phase=blocked attempt=2 time=2026-10-02T16:44:08Z curl: (35) Recv failure: Connection reset by peer
+http=000 remote=192.168.80.28 seconds=0.008284 curl_exit=35
+phase=blocked expected=block start=2026-10-02T16:44:08Z end=2026-10-02T16:44:08Z

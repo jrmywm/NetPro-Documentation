@@ -1,0 +1,29 @@
+
+> dpdk-frontend@0.1.0 test
+> react-scripts test --watchAll=false --runInBand
+
+PASS src/components/TimeRangeControls.test.js
+PASS src/components/LineChart.test.js
+PASS src/hooks/usePacketTimeline.test.js
+PASS src/components/ChartLayout.test.js
+
+Test Suites: 4 passed, 4 total
+Tests:       17 passed, 17 total
+Snapshots:   0 total
+Time:        5.261 s, estimated 6 s
+Ran all test suites.
+Jest did not exit one second after the test run has completed.
+
+This usually means that there are asynchronous operations that weren't stopped in your tests. Consider running Jest with `--detectOpenHandles` to troubleshoot this issue.
+[0;33mOne of your dependencies, babel-preset-react-app, is importing the
+"@babel/plugin-proposal-private-property-in-object" package without
+declaring it in its dependencies. This is currently working because
+"@babel/plugin-proposal-private-property-in-object" is already in your
+node_modules folder for unrelated reasons, but it [1mmay break at any time[0;33m.
+
+babel-preset-react-app is part of the create-react-app project, [1mwhich
+is not maintianed anymore[0;33m. It is thus unlikely that this bug will
+ever be fixed. Add "@babel/plugin-proposal-private-property-in-object" to
+your devDependencies to work around this error. This will make this message
+go away.[0m
+  

@@ -7,3 +7,7 @@ scripts/server-rst-proof/* text eol=lf
 evidence/server-rst-proof/*.txt whitespace=-blank-at-eol
 scripts/virtual-tap/* text eol=lf
 evidence/virtual-tap/*.txt whitespace=-blank-at-eol
+scripts/virtual-tap-live-test/* text eol=lf
+evidence/virtual-tap-live-test/*.txt whitespace=-blank-at-eol,-blank-at-eof
+evidence/frontend-2026-10-03/*.txt whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab
+evidence/virtual-tap-active-test/*.txt whitespace=-blank-at-eol,-blank-at-eof,-space-before-tab

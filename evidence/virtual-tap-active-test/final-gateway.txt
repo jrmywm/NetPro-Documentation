@@ -1,0 +1,7 @@
+Oct 02 16:44:06 netpro-test-gateway systemd[1]: Started netpro-tap-active-return-capture.service - /usr/bin/tcpdump -i ens38 -Z netpro -U -s0 -w /tmp/netpro-tap-active-return.i1sZ4k.pcap "tcp port 8443 and tcp[tcpflags] & tcp-rst != 0".
+Oct 02 16:44:06 netpro-test-gateway tcpdump[9089]: tcpdump: /tmp/netpro-tap-active-return.i1sZ4k.pcap: Permission denied
+Oct 02 16:44:06 netpro-test-gateway systemd[1]: netpro-tap-active-return-capture.service: Main process exited, code=exited, status=1/FAILURE
+Oct 02 16:44:06 netpro-test-gateway systemd[1]: netpro-tap-active-return-capture.service: Failed with result 'exit-code'.
+Stopped only named test units; retained evidence directory: /tmp/netpro-tap-live.NOA0ZA
+ens38            DOWN           00:0c:29:34:73:d6 <BROADCAST,MULTICAST> 
+net.ipv4.ip_forward = 0

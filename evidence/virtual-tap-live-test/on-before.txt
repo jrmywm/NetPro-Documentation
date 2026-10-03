@@ -1,0 +1,5 @@
+phase=on-before attempt=1 time=2026-10-02T16:33:02Z protocol=HTTP http=200 remote=192.168.80.28 seconds=0.029625 curl_exit=0
+phase=on-before attempt=1 time=2026-10-02T16:33:03Z protocol=TLS http=200 remote=192.168.80.28 seconds=0.025428 curl_exit=0
+phase=on-before attempt=2 time=2026-10-02T16:33:03Z protocol=HTTP http=200 remote=192.168.80.28 seconds=0.007134 curl_exit=0
+phase=on-before attempt=2 time=2026-10-02T16:33:03Z protocol=TLS http=200 remote=192.168.80.28 seconds=0.012669 curl_exit=0
+phase=on-before start=2026-10-02T16:33:02Z end=2026-10-02T16:33:03Z

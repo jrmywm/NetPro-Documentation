@@ -1,0 +1,14 @@
+netpro-virtual-tap
+ens36            UP             00:0c:29:da:93:26 <BROADCAST,MULTICAST,UP,LOWER_UP> 
+3: ens34: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master br-tap state forwarding priority 32 cost 5 
+4: ens35: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master br-tap state forwarding priority 32 cost 5 
+active
+filter protocol all pref 100 matchall chain 0 
+filter protocol all pref 100 matchall chain 0 handle 0x64 
+  not_in_hw (rule hit 29)
+	action order 1: mirred (Egress Mirror to device ens36) pipe
+	index 1 ref 1 bind 1 installed 1421 sec used 303 sec firstused 800 sec
+	Action statistics:
+	Sent 1968 bytes 29 pkt (dropped 0, overlimits 0 requeues 0) 
+	backlog 0b 0p requeues 0
+

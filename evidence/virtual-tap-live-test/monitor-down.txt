@@ -1,0 +1,4 @@
+2026-10-02T16:33:29Z
+ens36            DOWN           00:0c:29:da:93:26 <BROADCAST,MULTICAST> 
+3: ens34: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master br-tap state forwarding priority 32 cost 5 
+4: ens35: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master br-tap state forwarding priority 32 cost 5 

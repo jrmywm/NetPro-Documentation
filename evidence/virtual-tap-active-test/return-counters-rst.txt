@@ -1,0 +1,14 @@
+filter protocol ip pref 110 flower chain 0 
+filter protocol ip pref 110 flower chain 0 handle 0x6e 
+  eth_type ipv4
+  ip_proto tcp
+  dst_ip 192.168.80.29
+  src_port 8443
+  tcp_flags 0x4/4
+  not_in_hw
+	action order 1: mirred (Egress Redirect to device ens37) stolen
+	index 1 ref 1 bind 1 installed 27 sec firstused 25 sec
+	Action statistics:
+	Sent 3129472 bytes 68032 pkt (dropped 0, overlimits 0 requeues 0) 
+	backlog 0b 0p requeues 0
+

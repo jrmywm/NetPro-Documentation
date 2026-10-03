@@ -1,0 +1,2 @@
+{"message":"Blocked list successfully deleted","deletedBlockedList":{"id":"2e6ecb4e-8e3b-44ad-aaf7-470cfc7749c1","name":"NetPro virtual TAP active SNI test","domain":"netpro-tap.test","ip_add":"192.0.2.123","hit_count":0,"category":"Other","createdAt":"2026-10-02T16:43:09.419Z","updatedAt":"2026-10-02T16:43:09.419Z"}}
+HTTP 200

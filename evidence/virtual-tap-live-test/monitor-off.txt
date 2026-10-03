@@ -1,0 +1,5 @@
+phase=monitor-off attempt=1 time=2026-10-02T16:33:29Z protocol=HTTP http=200 remote=192.168.80.28 seconds=0.009382 curl_exit=0
+phase=monitor-off attempt=1 time=2026-10-02T16:33:29Z protocol=TLS http=200 remote=192.168.80.28 seconds=0.014406 curl_exit=0
+phase=monitor-off attempt=2 time=2026-10-02T16:33:29Z protocol=HTTP http=200 remote=192.168.80.28 seconds=0.007756 curl_exit=0
+phase=monitor-off attempt=2 time=2026-10-02T16:33:29Z protocol=TLS http=200 remote=192.168.80.28 seconds=0.014636 curl_exit=0
+phase=monitor-off start=2026-10-02T16:33:29Z end=2026-10-02T16:33:29Z
