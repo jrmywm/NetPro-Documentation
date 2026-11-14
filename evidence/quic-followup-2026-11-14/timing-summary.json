@@ -1,0 +1,10 @@
+{
+  "passed": 45,
+  "probes": 45,
+  "authenticated_close_packets": 3246,
+  "connections_with_authenticated_close": 3246,
+  "initial_to_first_close_ms": {
+    "median": 2.6013851165771484,
+    "max": 15.89202880859375
+  }
+}
