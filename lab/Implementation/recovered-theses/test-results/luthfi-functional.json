@@ -1,0 +1,175 @@
+{
+  "scope": "Luthfi functional integration; not a claim of identical thesis performance",
+  "frontend": {
+    "interactiveBrowserVerified": false,
+    "blocker": "lab self-signed certificate requires user acceptance",
+    "suitesPassed": 6,
+    "suitesTotal": 6,
+    "testsPassed": 25,
+    "testsTotal": 25,
+    "productionBuild": "passed"
+  },
+  "backend_adapter": {
+    "evidence": "stage4-authoritative-adapter.json",
+    "passed": 10,
+    "failed": 0,
+    "cases": [
+      {
+        "name": "explicit additive adapter migration is repeatable in isolated schema",
+        "passed": true
+      },
+      {
+        "name": "authoritative-model rows and publication receipts roll back together",
+        "passed": true
+      },
+      {
+        "name": "batch replay preserves UUIDs and one publication event per created policy",
+        "passed": true
+      },
+      {
+        "name": "conflicting replay and current-consumer oversized rules fail explicitly",
+        "passed": true
+      },
+      {
+        "name": "concurrent identical imports reuse the same authoritative-model row",
+        "passed": true
+      },
+      {
+        "name": "pending retries retain stable events; null database IP maps to string-only wire compatibility",
+        "passed": true
+      },
+      {
+        "name": "pre-existing rules keep their metadata and cannot be removed by import cleanup",
+        "passed": true
+      },
+      {
+        "name": "HTTP adapter requires authorization and never confuses publication with application",
+        "passed": true
+      },
+      {
+        "name": "owned-rule cleanup persists delete events and preserves domain-only wire semantics",
+        "passed": true
+      },
+      {
+        "name": "import removal refuses rules manually edited after activation",
+        "passed": true
+      }
+    ]
+  },
+  "integrated_csv": {
+    "evidence": "csv-dashboard-integration.json",
+    "passed": 7,
+    "failed": 0,
+    "cases": [
+      {
+        "name": "authenticated upload validates exact counts and scopes HTTP/Socket.IO data to owner",
+        "passed": true
+      },
+      {
+        "name": "preview and failed-row CSV expose validation results before activation",
+        "passed": true
+      },
+      {
+        "name": "explicit reviewed activation commits/publishes valid rows without claiming enforcement",
+        "passed": true
+      },
+      {
+        "name": "owner can remove exactly the import-created policies and publish their deletions",
+        "passed": true
+      },
+      {
+        "name": "validation retry resumes committed 1,000-row checkpoint without inflating duplicates",
+        "passed": true
+      },
+      {
+        "name": "activation retry resumes durable batch cursor through 1,501 policies with stable ownership counts",
+        "passed": true
+      },
+      {
+        "name": "integrated HTTP pipeline validates/stages 100,000 rows without automatic rule activation",
+        "passed": true
+      }
+    ]
+  },
+  "live_load": {
+    "evidence": "csv-live-load.json",
+    "passed": 2,
+    "failed": 0,
+    "cases": [
+      {
+        "name": "1001 CSV policies (explicit IP + domain only) published/applied with exact UUID/domain/IP digest",
+        "passed": true
+      },
+      {
+        "name": "all 1001 fixture policies removed and exact PS baseline restored",
+        "passed": true
+      }
+    ]
+  },
+  "deployed_health": {
+    "passed": true,
+    "services": {
+      "netpro-backend": "active",
+      "postgresql": "active",
+      "netpro-kafka": "active",
+      "nginx": "active"
+    },
+    "http": {
+      "/dashboard/imports": 200,
+      "/api/npb/npbs": 200,
+      "/api/ps/csv-imports": 401
+    },
+    "frontendRoot": "/var/www/netpro-frontend-csv-final-20261030T161236Z",
+    "serviceTokenAbsentFromFrontend": true,
+    "baselinePolicies": 1,
+    "pendingEvents": 0
+  },
+  "real_restart": {
+    "passed": true,
+    "checkpoint": 1000,
+    "rowsValidated": 100000,
+    "duplicates": 0,
+    "invalid": 0
+  },
+  "real_socket": {
+    "passed": true,
+    "ownerEvents": 3,
+    "otherOwnerEvents": 0,
+    "unauthenticatedRejected": true
+  },
+  "packet_blocking": {
+    "passed": true,
+    "evidence": "evidence\\csv-packets-20261030T155037Z\\results.json",
+    "phases": [
+      {
+        "name": "allow-before-csv",
+        "passed": true,
+        "trials": 20
+      },
+      {
+        "name": "deny-from-csv",
+        "passed": true,
+        "trials": 20
+      },
+      {
+        "name": "deny-split-clienthello-from-csv",
+        "passed": true,
+        "trials": 20
+      },
+      {
+        "name": "allow-after-csv-removal",
+        "passed": true,
+        "trials": 20
+      }
+    ],
+    "baselineRestored": true,
+    "cleanup": "completed_or_auto_verified"
+  },
+  "limitations": [
+    "No automatic PS enforcement acknowledgement; published means Kafka acknowledged",
+    "Use template CSV and current consumer-compatible domains; IPv4 optional, no URL/wildcard import",
+    "Original legacy dependency versions retained; no internet-production security audit",
+    "Whole-file activation uses durable batches and can be partial until complete; use retry/owned removal",
+    "Rafie integration and thesis-performance replication are separate work"
+  ]
+}

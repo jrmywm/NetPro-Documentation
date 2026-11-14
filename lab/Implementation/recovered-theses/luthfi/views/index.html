@@ -1,0 +1,57 @@
+<!-- html views to upload and download file csv -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Massive Data Management</title>
+  </head>
+  <body>
+    <!-- Upload single file -->
+    <div>
+      <form
+        id="uploadSingleFileForm"
+        action="/upload"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        <input
+          type="file"
+          name="file"
+          placeholder="Upload single file here"
+          required
+        />
+        <button type="submit">Upload</button>
+      </form>
+
+      <div id="response" style="display: none"></div>
+    </div>
+
+    <!-- Upload multiple files -->
+    <div>
+      <form
+        id="uploadMultipleFileForm"
+        action="/upload"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        <input
+          type="file"
+          name="files"
+          placeholder="Upload multiple files here"
+          multiple
+          required
+        />
+        <button type="submit">Upload</button>
+      </form>
+
+      <div id="responses" style="display: none"></div>
+    </div>
+
+    <!-- Download file -->
+    <div id="downloadFiles">
+      <a href="/csv-file" role="button">Download</a>
+    </div>
+  </body>
+</html>

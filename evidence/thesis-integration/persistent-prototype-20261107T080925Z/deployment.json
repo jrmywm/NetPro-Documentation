@@ -1,0 +1,257 @@
+{
+  "persistent": true,
+  "probes": [
+    {
+      "phase": "before",
+      "transport": "h3",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0"
+    },
+    {
+      "phase": "before",
+      "transport": "h3",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0"
+    },
+    {
+      "phase": "before",
+      "transport": "tls",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0"
+    },
+    {
+      "phase": "before",
+      "transport": "tls",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0"
+    },
+    {
+      "phase": "before",
+      "transport": "fallback",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0"
+    },
+    {
+      "phase": "before",
+      "transport": "fallback",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0"
+    },
+    {
+      "phase": "deny",
+      "transport": "h3",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28"
+    },
+    {
+      "phase": "deny",
+      "transport": "h3",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28"
+    },
+    {
+      "phase": "deny",
+      "transport": "tls",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=56"
+    },
+    {
+      "phase": "deny",
+      "transport": "tls",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=56"
+    },
+    {
+      "phase": "deny",
+      "transport": "fallback",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28"
+    },
+    {
+      "phase": "deny",
+      "transport": "fallback",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28"
+    },
+    {
+      "phase": "after",
+      "transport": "h3",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0"
+    },
+    {
+      "phase": "after",
+      "transport": "h3",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0"
+    },
+    {
+      "phase": "after",
+      "transport": "tls",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0"
+    },
+    {
+      "phase": "after",
+      "transport": "tls",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0"
+    },
+    {
+      "phase": "after",
+      "transport": "fallback",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0"
+    },
+    {
+      "phase": "after",
+      "transport": "fallback",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0"
+    },
+    {
+      "phase": "persisted-before",
+      "transport": "h3",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0"
+    },
+    {
+      "phase": "persisted-before",
+      "transport": "h3",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0"
+    },
+    {
+      "phase": "persisted-before",
+      "transport": "tls",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0"
+    },
+    {
+      "phase": "persisted-before",
+      "transport": "tls",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0"
+    },
+    {
+      "phase": "persisted-before",
+      "transport": "fallback",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0"
+    },
+    {
+      "phase": "persisted-before",
+      "transport": "fallback",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0"
+    },
+    {
+      "phase": "persisted-deny",
+      "transport": "h3",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28"
+    },
+    {
+      "phase": "persisted-deny",
+      "transport": "h3",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28"
+    },
+    {
+      "phase": "persisted-deny",
+      "transport": "tls",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=56"
+    },
+    {
+      "phase": "persisted-deny",
+      "transport": "tls",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=56"
+    },
+    {
+      "phase": "persisted-deny",
+      "transport": "fallback",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28"
+    },
+    {
+      "phase": "persisted-deny",
+      "transport": "fallback",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28"
+    },
+    {
+      "phase": "persisted-after",
+      "transport": "h3",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0"
+    },
+    {
+      "phase": "persisted-after",
+      "transport": "h3",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0"
+    },
+    {
+      "phase": "persisted-after",
+      "transport": "tls",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0"
+    },
+    {
+      "phase": "persisted-after",
+      "transport": "tls",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0"
+    },
+    {
+      "phase": "persisted-after",
+      "transport": "fallback",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0"
+    },
+    {
+      "phase": "persisted-after",
+      "transport": "fallback",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0"
+    }
+  ]
+}

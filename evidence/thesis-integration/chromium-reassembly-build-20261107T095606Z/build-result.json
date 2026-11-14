@@ -1,0 +1,6 @@
+{
+  "remote": "/home/netpro/incoming/chromium-reassembly.aMTJMc",
+  "stdout": "Decryption finalization failed - authentication failed\nPASS captured Chromium Initials in order, reordered, duplicated, and tampered\n132c7650d01400a6726a359c06994963b8636893930d417e394cc86028016f1d  policyServer-browser\n",
+  "stderr": "",
+  "rc": 0
+}

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Start a new Tmux session 
+tmux new-session -d './build/policyServer -l 0-4 -n 2'
+
+# Make all three panes the same size (currently, the first pane
+# is 50% of the window, and the two new panes are 25% each).
+tmux select-layout even-horizontal
+# Now attach to the window
+tmux attach-session

@@ -95,5 +95,6 @@ If helper directories are not present on the VMs, this is a deployment-precheck 
 
 - Do not describe monitor-NIC down as TAP-VM power-off tolerance or physical fail-open behavior.
 - Do not present the failed shared-RX active-blocking test as successful; it had an escaped request and a probable reset feedback loop, without a usable PCAP.
+- A later five-request TLS proof used a segment separate from shared `NetPro-RX`; a subsequent VMX audit found Packet Generator Adapter 4 also attached. It is narrow packet-path evidence, not a general active-blocking demo; no further traffic was run after that discovery. See the [dedicated-segment RST report](dedicated-rst-return-test-2026-10-03.md). Do not add active RST injection to this dashboard demonstration.
 - Successful custom-range form submission and mobile viewport layout have not been verified.
 - The NPB and Policy dashboard UI checks are current; keep the video factual and avoid inferring loss-free capture from the charts.

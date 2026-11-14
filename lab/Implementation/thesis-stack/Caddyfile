@@ -1,0 +1,14 @@
+{
+    admin 127.0.0.1:2019
+    auto_https disable_redirects
+    servers {
+        protocols h1 h2 h3
+    }
+}
+
+https://mysite.local {
+    bind 192.168.80.28
+    tls internal
+    respond "NetPro thesis Caddy HTTP/3 endpoint" 200
+    log
+}

@@ -1,0 +1,13 @@
+{
+  "original": {
+    "index.js": "41192cd523a4f9d2179285c7e44841417b9905238cdd7756a50bf7fc40e9ad93",
+    "src/app.js": "5d269c7bdf13da758c511a7225625ec308693008441ba98d3018eee98d31c89e"
+  },
+  "candidate": {
+    "index.js": "c1fd0763bd98fede47c64e4ae1b7ad8425882c96ae74527516d2ec01087890ba",
+    "src/app.js": "62cb19210a842f60548915a0a753007cb89dcafa1d12361cf07f6279f3a4c0f8",
+    "src/integration/bulk-policy.js": "b43b2e2bf89a93f70fb6ff10c9f8bf9abcbc28d03e05bcc00fecea6cfb055cd3",
+    "src/integration/bootstrap.js": "b527ae28acab66da077b888cca97f65cd059d2cc059808d8688b90bd4d0d64a8",
+    "src/integration/policy-contract.js": "1c56efb3746e7d80ce918e65c3cc07427ac68dec9dded71cd913a58aa0884964"
+  }
+}

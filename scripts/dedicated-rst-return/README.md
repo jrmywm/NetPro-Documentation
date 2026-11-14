@@ -1,0 +1,9 @@
+# Dedicated RST return-path proof helpers
+
+These helpers document one bounded proof on a segment separate from shared `NetPro-RX`. A subsequent full VMX audit found Packet Generator Adapter 4 (`ethernet3`) also attached, alongside Policy's RST-output adapter and Gateway `ens38`; the segment is not exclusive to the two endpoints. The recorded five-request result remains bounded evidence, but no further traffic should be run until the Generator adapter's capture-only role is confirmed or it is disconnected and membership is re-audited. These helpers are not a repeatable expanded test plan and do not establish physical fail-open behavior, reliable race handling, segmented/concurrent traffic, or high-load behavior.
+
+`capture.sh` is passive and bounded to 12 seconds or 100 TCP/8443 packets. It mirrors `ens38` ingress into a temporary dummy interface so capture observes frames while a catch-all ingress action drops originals. It requires `netpro-test-gateway`, the expected `ens38` MAC, and a clean DOWN/non-promiscuous baseline. The root-owned capture directory remains under `/tmp` for review.
+
+`return.sh start|status|stop` installs only exact client/server RST tuple filters on Gateway `ens38`, a catch-all drop, and a 60-second automatic stop. Its police action drops excess packets and passes conforming packets. `stop` restores `ens38` DOWN/non-promiscuous and removes only the helper-owned rules/qdisc. It does not modify Policy data, `ip_forward`, routing/NAT, services, or other interfaces. Review the helper and confirm the installed `tc` syntax before any future execution. Do not run concurrently with other packet-path tests.
+
+The 3 October 2026 bounded result is documented in [the test report](../../docs/dedicated-rst-return-test-2026-10-03.md). Capture evidence is retained separately under `evidence/dedicated-rst-return` when included; the PCAPs are lab-specific and should not be treated as portable test fixtures.

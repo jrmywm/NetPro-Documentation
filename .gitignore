@@ -42,3 +42,11 @@ coverage/
 *.log
 .DS_Store
 Thumbs.db
+
+# Machine-local scratch and generated thesis evidence remain outside the source snapshot.
+/work/
+/lab/**/evidence/
+/lab/**/backend-contract/
+
+# Microsoft Office lock files
+~$*

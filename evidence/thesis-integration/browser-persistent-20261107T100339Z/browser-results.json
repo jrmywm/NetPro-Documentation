@@ -1,0 +1,146 @@
+[
+  {
+    "phase": "before",
+    "mode": "h3",
+    "passed": true,
+    "loaded": true,
+    "exit": 0,
+    "quic_sessions": 1,
+    "tcp_connections": 0,
+    "tls_resets": 0,
+    "peer_closes": 0,
+    "quic_handshakes": 1
+  },
+  {
+    "phase": "before",
+    "mode": "tcp",
+    "passed": true,
+    "loaded": true,
+    "exit": 0,
+    "quic_sessions": 0,
+    "tcp_connections": 2,
+    "tls_resets": 0,
+    "peer_closes": 0,
+    "quic_handshakes": 0
+  },
+  {
+    "phase": "before",
+    "mode": "normal",
+    "passed": true,
+    "loaded": true,
+    "exit": 0,
+    "quic_sessions": 1,
+    "tcp_connections": 1,
+    "tls_resets": 0,
+    "peer_closes": 0,
+    "quic_handshakes": 0
+  },
+  {
+    "phase": "before",
+    "mode": "curl-h3",
+    "passed": true,
+    "output": "HTTP 200 VERSION 3\nCURL_EXIT=0"
+  },
+  {
+    "phase": "before",
+    "mode": "curl-tcp",
+    "passed": true,
+    "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0"
+  },
+  {
+    "phase": "deny",
+    "mode": "h3",
+    "passed": true,
+    "loaded": false,
+    "exit": 0,
+    "quic_sessions": 3,
+    "tcp_connections": 0,
+    "tls_resets": 0,
+    "peer_closes": 6,
+    "quic_handshakes": 0
+  },
+  {
+    "phase": "deny",
+    "mode": "tcp",
+    "passed": true,
+    "loaded": false,
+    "exit": 0,
+    "quic_sessions": 0,
+    "tcp_connections": 4,
+    "tls_resets": 4,
+    "peer_closes": 0,
+    "quic_handshakes": 0
+  },
+  {
+    "phase": "deny",
+    "mode": "normal",
+    "passed": true,
+    "loaded": false,
+    "exit": 0,
+    "quic_sessions": 0,
+    "tcp_connections": 4,
+    "tls_resets": 4,
+    "peer_closes": 0,
+    "quic_handshakes": 0
+  },
+  {
+    "phase": "deny",
+    "mode": "curl-h3",
+    "passed": true,
+    "output": "HTTP 000 VERSION 0\nCURL_EXIT=28"
+  },
+  {
+    "phase": "deny",
+    "mode": "curl-tcp",
+    "passed": true,
+    "output": "HTTP 000 VERSION 0\nCURL_EXIT=56"
+  },
+  {
+    "phase": "after",
+    "mode": "h3",
+    "passed": true,
+    "loaded": true,
+    "exit": 0,
+    "quic_sessions": 2,
+    "tcp_connections": 0,
+    "tls_resets": 0,
+    "peer_closes": 0,
+    "quic_handshakes": 2
+  },
+  {
+    "phase": "after",
+    "mode": "tcp",
+    "passed": true,
+    "loaded": true,
+    "exit": 0,
+    "quic_sessions": 0,
+    "tcp_connections": 1,
+    "tls_resets": 0,
+    "peer_closes": 0,
+    "quic_handshakes": 0
+  },
+  {
+    "phase": "after",
+    "mode": "normal",
+    "passed": true,
+    "loaded": true,
+    "exit": 0,
+    "quic_sessions": 0,
+    "tcp_connections": 1,
+    "tls_resets": 0,
+    "peer_closes": 0,
+    "quic_handshakes": 0
+  },
+  {
+    "phase": "after",
+    "mode": "curl-h3",
+    "passed": true,
+    "output": "HTTP 200 VERSION 3\nCURL_EXIT=0"
+  },
+  {
+    "phase": "after",
+    "mode": "curl-tcp",
+    "passed": true,
+    "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0"
+  }
+]

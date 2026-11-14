@@ -1,5 +1,7 @@
 # NetPro Documentation Index
 
+> Current state: [six-VM deployment, thesis adaptations and 14 November checks](current-integration-status-2026-11-14.md). Older topology instructions below are historical.
+
 This documentation is a rebuild runbook for the complete six-VM lab. Build each VM with Adapter 1 left on VMware NAT so SSH, package installation, and certificate distribution remain available. Add the stable `192.168.0.90`-`192.168.0.95` control addresses as secondary addresses; bridged/external networking is an optional phase after the lab is working.
 
 ## Rebuild order and acceptance gates
@@ -17,7 +19,7 @@ Every VM guide has a reboot checkpoint. Do not advance to packet-path testing un
 - [Current three-port Policy Server runbook](policy-three-port-upgrade.md) - concurrent HTTP/TLS processing and mixed-traffic telemetry verified before and after Policy VM reboot
 - [Engineering checkpoint (2 October)](engineering-checkpoint-2026-10-01.md) - segmented TLS ClientHello evidence, offline regression, and historical source/runtime notes; see the current checkpoint below for latest status
 - [Current project checkpoint](current-project-checkpoint-2026-10-03.md) - latest lab/service state, frontend validation, TAP results, failed active test, and repository boundary
-- [Professor video demonstration guide](professor-video-demo-guide.md) - dashboard-led 6–10 minute demo, preflight gates, safe local traffic, cleanup, and stop criteria
+- [Professor video demonstration guide](professor-video-demo-guide.md) - dashboard-led 6â€“10 minute demo, preflight gates, safe local traffic, cleanup, and stop criteria
 - [Professor discussion: OVS mirroring](professor-discussion-ovs.md) - official OVS mirror behavior and acceptance/design questions; no OVS implementation decision
 - [Frontend chart and passive-capture design plan](frontend-chart-and-passive-capture-plan.md) - verified chart timestamp fix and capture/enforcement architecture decision
 - [Frontend time-window update](frontend-time-window-2026-10-03.md) - live NPB verification, test/build results, and remaining UI limitations
@@ -26,6 +28,7 @@ Every VM guide has a reboot checkpoint. Do not advance to packet-path testing un
 - [TRex reset-return MAC diagnosis](reset-return-mac-diagnosis-2026-10-02.md) - original/normalized receive captures and Policy telemetry comparison
 - [TRex profile MAC correction and mixed retest](trex-profile-mac-fix-2026-10-02.md) - corrected five profiles and controlled eight-second HTTP/TLS/UDP result
 - [Server-directed RST proof](server-directed-rst-proof-2026-10-02.md) - controlled routed-backend capture confirms server-directed reset path; bounded VM test only
+- [Dedicated-segment RST return-path test](dedicated-rst-return-test-2026-10-03.md) - bounded five-request TLS proof on a segment separate from shared RX; VMX audit found Packet Generator Adapter 4 also attached
 - [Virtual TAP VM setup](virtual-tap-setup-2026-10-03.md) - installation/reboot record with initial wiring-pending statement marked historical; see current bounded [live test report](virtual-tap-independence-test-2026-10-03.md)
 - [Virtual TAP monitor-branch test](virtual-tap-independence-test-2026-10-03.md) - 12/12 local HTTP/TLS requests succeeded with the monitor NIC on, off, and restored; bounded to monitor-NIC independence
 - [Virtual TAP active-blocking test](virtual-tap-active-blocking-test-2026-10-03.md) - failed safety validation with an escaped request and probable reset feedback loop; passive mirroring remains recommended

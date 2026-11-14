@@ -1,0 +1,287 @@
+{
+  "date": "2026-10-31",
+  "scope": "Rafie adaptation in active HTTP/TLS Policy Server profile",
+  "moduleCases": [
+    "all 15001 blocked rows match exact IDs, including beyond original 1000/10000 caps",
+    "2000 nonmembers match SQLite ground truth, including Bloom false positives",
+    "preloaded tier and repeated positive LRU preserve policy IDs",
+    "cached allow/block invalidated after create, rename and delete",
+    "same-connection unannounced mutation detected by total_changes",
+    "IP-only policies do not invalidate complete domain-filter coverage",
+    "malformed input and database errors never become cached allow decisions",
+    "true LRU evicts least recently used entry, not most recently touched",
+    "saturated counters plus 90000 removals produce no false negatives in 10000 survivors",
+    "separate-connection commits invalidate filter/cache through SQLite data_version",
+    "fresh module restart reconstructs current policy state without stale cache",
+    "benchmark processed every requested query with exact expected decision"
+  ],
+  "actualPolicyHandlerCases": [
+    "actual Kafka handler create/replay/rename/delete, prepared quoting, shadow oracle and hit-ID path",
+    "enabled actual Policy Server wrappers across 40 alternating create/delete cycles",
+    "actual serialized policy updates with 3 concurrent reader threads: zero shadow divergences",
+    "actual Kafka mutation retries temporary SQLite reader lock instead of dropping policy event"
+  ],
+  "moduleAndHandlerSanitizersPassed": true,
+  "liveEvidence": "evidence\\rafie-live-20261031T023723Z\\RESULTS.json",
+  "live": {
+    "runs": [
+      {
+        "mode": "shadow",
+        "phases": [
+          {
+            "name": "allow-before-add",
+            "passed": true,
+            "trials": 20
+          },
+          {
+            "name": "deny-after-add",
+            "passed": true,
+            "trials": 20
+          },
+          {
+            "name": "deny-split-clienthello",
+            "passed": true,
+            "trials": 20
+          },
+          {
+            "name": "allow-after-delete",
+            "passed": true,
+            "trials": 20
+          }
+        ],
+        "status": {
+          "mode": "shadow",
+          "shadowMismatches": 0,
+          "policySyncReady": true,
+          "initialHighwater": 2187,
+          "lastOffset": 2188,
+          "lookup": {
+            "enabled": true,
+            "filterValid": true,
+            "capacity": 20000,
+            "queries": 80,
+            "hotHits": 40,
+            "lruHits": 38,
+            "bloomNegatives": 2,
+            "sqliteQueries": 0,
+            "falsePositives": 0,
+            "rebuilds": 3,
+            "invalidations": 2045,
+            "errors": 0,
+            "evictions": 0,
+            "loadedRows": 4,
+            "counterSaturations": 0
+          }
+        },
+        "cleanup": {
+          "time_utc": "2026-10-31T02:37:53.715377+00:00",
+          "status": "completed_or_auto_verified"
+        }
+      },
+      {
+        "mode": "rafie",
+        "phases": [
+          {
+            "name": "allow-before-add",
+            "passed": true,
+            "trials": 20
+          },
+          {
+            "name": "deny-after-add",
+            "passed": true,
+            "trials": 20
+          },
+          {
+            "name": "deny-split-clienthello",
+            "passed": true,
+            "trials": 20
+          },
+          {
+            "name": "allow-after-delete",
+            "passed": true,
+            "trials": 20
+          }
+        ],
+        "status": {
+          "mode": "rafie",
+          "shadowMismatches": 0,
+          "policySyncReady": true,
+          "initialHighwater": 2189,
+          "lastOffset": 2190,
+          "lookup": {
+            "enabled": true,
+            "filterValid": true,
+            "capacity": 20000,
+            "queries": 80,
+            "hotHits": 40,
+            "lruHits": 38,
+            "bloomNegatives": 2,
+            "sqliteQueries": 0,
+            "falsePositives": 0,
+            "rebuilds": 3,
+            "invalidations": 2047,
+            "errors": 0,
+            "evictions": 0,
+            "loadedRows": 4,
+            "counterSaturations": 0
+          }
+        },
+        "cleanup": {
+          "time_utc": "2026-10-31T02:38:25.780927+00:00",
+          "status": "completed_or_auto_verified"
+        }
+      }
+    ],
+    "passed": true,
+    "restart": {
+      "mode": "rafie",
+      "baselinePreserved": true,
+      "status": {
+        "mode": "rafie",
+        "shadowMismatches": 0,
+        "policySyncReady": true,
+        "initialHighwater": 2191,
+        "lastOffset": 2190,
+        "lookup": {
+          "enabled": true,
+          "filterValid": false,
+          "capacity": 20000,
+          "queries": 0,
+          "hotHits": 0,
+          "lruHits": 0,
+          "bloomNegatives": 0,
+          "sqliteQueries": 0,
+          "falsePositives": 0,
+          "rebuilds": 0,
+          "invalidations": 2047,
+          "errors": 0,
+          "evictions": 0,
+          "loadedRows": 0,
+          "counterSaturations": 0
+        }
+      }
+    }
+  },
+  "postRestartAndCsvEvidence": "evidence\\rafie-postimport-20261031T024027Z\\RESULTS.json",
+  "postRestartAndCsv": {
+    "passed": true,
+    "allowTrials": 20,
+    "status": {
+      "mode": "rafie",
+      "shadowMismatches": 0,
+      "policySyncReady": true,
+      "initialHighwater": 2191,
+      "lastOffset": 4192,
+      "lookup": {
+        "enabled": true,
+        "filterValid": true,
+        "capacity": 20000,
+        "queries": 20,
+        "hotHits": 0,
+        "lruHits": 19,
+        "bloomNegatives": 1,
+        "sqliteQueries": 0,
+        "falsePositives": 0,
+        "rebuilds": 1,
+        "invalidations": 4049,
+        "errors": 0,
+        "evictions": 0,
+        "loadedRows": 4,
+        "counterSaturations": 0
+      }
+    },
+    "cleanup": {
+      "time_utc": "2026-10-31T02:40:38.285509+00:00",
+      "status": "completed_or_auto_verified"
+    }
+  },
+  "bulkCsvPropagation": [
+    {
+      "name": "1001 CSV policies (explicit IP + domain only) published/applied with exact UUID/domain/IP digest",
+      "passed": true,
+      "expected": {
+        "count": 1001,
+        "digest": "856f8423414ca31363cf00cb4a6fcfa3"
+      }
+    },
+    {
+      "name": "all 1001 fixture policies removed and exact PS baseline restored",
+      "passed": true
+    }
+  ],
+  "mixedLookupMicrobenchmark": {
+    "scope": "standalone exact SQLite versus adapted tiers; 15001 rows, no domain index, 80 percent repeated listed/20 percent unique absent",
+    "mismatches": 0,
+    "processMaxRssKiB": 4880,
+    "sqlite": {
+      "processed": 3000,
+      "seconds": 1.743923539,
+      "qps": 1720.259,
+      "p50_us": 584.941,
+      "p95_us": 999.891,
+      "p99_us": 1207.816
+    },
+    "tiers": {
+      "processed": 3000,
+      "seconds": 0.084387744,
+      "qps": 35550.186,
+      "p50_us": 3.135,
+      "p95_us": 8.268,
+      "p99_us": 662.772
+    }
+  },
+  "indexedRepeatedMicrobenchmark": {
+    "queries": 30000,
+    "sqliteSeconds": 0.111214,
+    "cacheSeconds": 0.139319
+  },
+  "deployment": {
+    "deployed": true,
+    "mode": "shadow",
+    "backup": "/root/netpro-rafie-20261031T023327Z",
+    "binary": "/home/netpro/NetPro-Policy-Server/build/policyServer-rafie-20261031T023646Z",
+    "baselinePreserved": true,
+    "binarySha256": "5d5434797d830129b62fdb5bcda33b56fa6ccdf251ddecef9e474775cdc84205",
+    "sourceSha256": {
+      "policyServer.c": "c770eb18afcfdb07a2650ab09c17f09d95ae74c02937dc2ae00b743f46db6ff8",
+      "Makefile": "fa35512aa9143307f6de58aa9565ef7302410582205acf82aaef1cdf861cf6dc",
+      "rafie_lookup.h": "8c890a14696578485c0f1a3d123b7dbd3ccda38ded61fda4453a0aa66a65d9a7",
+      "rafie_lookup.c": "bef11b30ae5e690c0b87da683e8acda15eb4580835a250e51b798f497df5be70"
+    },
+    "readinessBackup": "/root/netpro-rafie-readiness-20261031T023646Z",
+    "status": {
+      "mode": "shadow",
+      "shadowMismatches": 0,
+      "policySyncReady": true,
+      "initialHighwater": 2187,
+      "lastOffset": 2186,
+      "lookup": {
+        "enabled": true,
+        "filterValid": false,
+        "capacity": 20000,
+        "queries": 0,
+        "hotHits": 0,
+        "lruHits": 0,
+        "bloomNegatives": 0,
+        "sqliteQueries": 0,
+        "falsePositives": 0,
+        "rebuilds": 0,
+        "invalidations": 2043,
+        "errors": 0,
+        "evictions": 0,
+        "loadedRows": 0,
+        "counterSaturations": 0
+      }
+    }
+  },
+  "activeMode": "rafie",
+  "passed": true,
+  "limitations": [
+    "Adaptation, not identical original recovered code or thesis hardware/performance",
+    "Mixed microbenchmark compares direct SQLite lookups, not full legacy cache or whole system",
+    "Indexed repeated SQLite was faster than guarded tiers; speedup is workload-dependent",
+    "Updates invalidate all tiers; lazy full rebuild cost under sustained bulk changes remains to benchmark",
+    "Service startup replays Kafka history; readiness must be checked before demo/measurement",
+    "Experimental original QUIC candidate remains separate; no new QUIC enforcement claim"
+  ]
+}

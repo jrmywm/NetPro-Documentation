@@ -1,0 +1,23 @@
+{
+  "expected": {
+    "index.js": "c1fd0763bd98fede47c64e4ae1b7ad8425882c96ae74527516d2ec01087890ba",
+    "src/app.js": "62cb19210a842f60548915a0a753007cb89dcafa1d12361cf07f6279f3a4c0f8",
+    "src/integration/bulk-policy.js": "b43b2e2bf89a93f70fb6ff10c9f8bf9abcbc28d03e05bcc00fecea6cfb055cd3",
+    "src/integration/bootstrap.js": "b527ae28acab66da077b888cca97f65cd059d2cc059808d8688b90bd4d0d64a8",
+    "src/integration/policy-contract.js": "1c56efb3746e7d80ce918e65c3cc07427ac68dec9dded71cd913a58aa0884964",
+    "src/middleware/authMiddleware.js": "b686dfa25556d2c6db381feb3cfe8a7837a16e9ecacde41b111a03556e07ddd6"
+  },
+  "candidate": {
+    "index.js": "4a34f4e3d948bd10cd682a692436b9daaa1bbf171c51db122e28f0ddbba4fd8b",
+    "src/app.js": "62cb19210a842f60548915a0a753007cb89dcafa1d12361cf07f6279f3a4c0f8",
+    "src/middleware/authMiddleware.js": "a016bbcdcf0385f45d2326a37ea48b4475d243b135cad1f8da75fa544ab013d3",
+    "src/integration/bootstrap.js": "733d5c40f430d2c2f25b8542a0dc558c299affff4114a02f0391ba2cb329440f",
+    "src/integration/bulk-policy.js": "2741c4e223323409fb31570168409282fc4953c2cb3af15de701c1da7ee129d3",
+    "src/integration/csv-batches.js": "b25774e04641824158c8aeb7ca1e1542a807297caa544dc581fbb84c8924aeaf",
+    "src/integration/csv-imports.js": "2bd5c4ebec13ec94dde662be8b21506a209e5addf84ac7146f5afe0f150c07cc",
+    "src/integration/policy-contract.js": "1c56efb3746e7d80ce918e65c3cc07427ac68dec9dded71cd913a58aa0884964",
+    "src/integration/runtime/index.js": "b69267ccf6dda4c9717e39ec94d1131a764d4dc649d1894b1b75e7c3f51b1239",
+    "src/integration/runtime/package.json": "186922b12b1b47b832ca7158e6e82aa804542a1592694f2a11d14b7b8e21ebd3",
+    "src/integration/runtime/package-lock.json": "cdb4ceae372c88b18794c8d14644749f1567518e5f8694f1afe99900ae72760d"
+  }
+}

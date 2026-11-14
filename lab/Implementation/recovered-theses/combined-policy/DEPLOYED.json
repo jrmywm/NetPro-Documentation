@@ -1,0 +1,12 @@
+{
+  "collectedUtc": "2026-11-06T23:19:25.526261+00:00",
+  "active": "policyServer-monitoring-20261106T230726Z\nd7d696fd5997f2a947f02348cb6fa145b9a5f19ea3ed214d0e6816a3e56ec8d5  /home/netpro/NetPro-Policy-Server/build/policyServer\n{\"mode\":\"rafie\",\"shadowMismatches\":0,\"policySyncReady\":true,\"initialHighwater\":4222,\"lastOffset\":6225,\"lookup\":{\"enabled\":true,\"filterValid\":true,\"capacity\":20000,\"queries\":80,\"hotHits\":40,\"lruHits\":38,\"bloomNegatives\":2,\"sqliteQueries\":0,\"falsePositives\":0,\"rebuilds\":3,\"invalidations\":6082,\"errors\":0,\"evictions\":0,\"loadedRows\":4,\"counterSaturations\":0}\n}\n",
+  "sourceHashes": {
+    "Makefile": "01bdb1124682f61bf4e828c1eb35a7186fca8be52e26d9b957701b7b7c1bdf50",
+    "policyServer.c": "ff1d05a878002334742bd6cde4473bc1ea4ab3724b9bab1155d2a7d4d1112cc2",
+    "rafie_lookup.c": "bef11b30ae5e690c0b87da683e8acda15eb4580835a250e51b798f497df5be70",
+    "rafie_lookup.h": "8c890a14696578485c0f1a3d123b7dbd3ccda38ded61fda4453a0aa66a65d9a7",
+    "thesis_monitoring.c": "db52b789e94ee0a4d931ef037eb869dc275199b7a8d00555c49efaf199fe2d6a",
+    "thesis_monitoring.h": "71a03cf1de0ae381ecb63e00e962fa9874605b77e1cdb448b9c3ed4dc1bee295"
+  }
+}

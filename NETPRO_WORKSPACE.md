@@ -1,30 +1,32 @@
 # NetPro Workspace
 
+> Current state: [six-VM deployment, thesis adaptations and 14 November checks](docs/current-integration-status-2026-11-14.md). Older topology instructions below are historical.
+
 This repository is the shared documentation and operating record for the NetPro project. The six component repositories remain independent Git repositories under a local `repos/` folder. VM disks, packet captures, secrets, dependencies, and generated data stay outside Git. The documented rebuild keeps Adapter 1 on VMware NAT during installation and validation; bridged/external access is optional only after the isolated lab is healthy.
 
 ## Workspace layout
 
 ```text
 NetPro Documentation/
-├── NETPRO_WORKSPACE.md
-├── .gitignore
-├── docs/
-│   ├── README.md
-│   ├── policy-server-vm-setup.md
-│   ├── kafka-broker-vm-setup.md
-│   ├── npb-vm-setup.md
-│   ├── packet-generator-vm-setup.md
-│   ├── end-to-end-http-validation.md
-│   ├── backend-vm-setup.md
-│   ├── frontend-vm-setup.md
-│   └── setup-obstacles-and-fixes.md
-└── repos/                         # local-only; ignored by this repository
-    ├── NetPro-Policy-Server/
-    ├── NetPro-Network-Packet-Broker/
-    ├── NetPro-Kafka-Message-Broker/
-    ├── NetPro-Packet-Generator/
-    ├── NetPro-Backend/
-    └── NetPro-Frontend/
+â”œâ”€â”€ NETPRO_WORKSPACE.md
+â”œâ”€â”€ .gitignore
+â”œâ”€â”€ docs/
+â”‚   â”œâ”€â”€ README.md
+â”‚   â”œâ”€â”€ policy-server-vm-setup.md
+â”‚   â”œâ”€â”€ kafka-broker-vm-setup.md
+â”‚   â”œâ”€â”€ npb-vm-setup.md
+â”‚   â”œâ”€â”€ packet-generator-vm-setup.md
+â”‚   â”œâ”€â”€ end-to-end-http-validation.md
+â”‚   â”œâ”€â”€ backend-vm-setup.md
+â”‚   â”œâ”€â”€ frontend-vm-setup.md
+â”‚   â””â”€â”€ setup-obstacles-and-fixes.md
+â””â”€â”€ repos/                         # local-only; ignored by this repository
+    â”œâ”€â”€ NetPro-Policy-Server/
+    â”œâ”€â”€ NetPro-Network-Packet-Broker/
+    â”œâ”€â”€ NetPro-Kafka-Message-Broker/
+    â”œâ”€â”€ NetPro-Packet-Generator/
+    â”œâ”€â”€ NetPro-Backend/
+    â””â”€â”€ NetPro-Frontend/
 ```
 
 ## Repository purposes
@@ -49,15 +51,15 @@ NetPro Documentation/
 | `Backend-VM` | Ubuntu 24.04 | DHCP: `192.168.31.135` | `192.168.0.94/24` | PostgreSQL, HTTPS API, Kafka, and reboot persistence verified |
 | `Frontend-VM` | Ubuntu 24.04 | DHCP/NAT: `192.168.31.136` | `192.168.0.95/24` | HTTPS dashboard, login, systemd startup, and reboot persistence verified |
 
-DHCP/NAT addresses can change. The `192.168.0.90`–`192.168.0.95` secondary addresses are the stable NetPro control addresses used by the current lab configuration. Browser-facing URLs use the VMware NAT addresses because the Windows host does not route the VM-only `192.168.0.0/24` control network. Do not replace Adapter 1 with a bridged adapter during the build; external access can be added later as a separately tested phase.
+DHCP/NAT addresses can change. The `192.168.0.90`â€“`192.168.0.95` secondary addresses are the stable NetPro control addresses used by the current lab configuration. Browser-facing URLs use the VMware NAT addresses because the Windows host does not route the VM-only `192.168.0.0/24` control network. Do not replace Adapter 1 with a bridged adapter during the build; external access can be added later as a separately tested phase.
 
 ## VMware LAN segments
 
 | Segment | Connects | Purpose |
 | --- | --- | --- |
 | `NetPro-RX` | Packet Generator, NPB input, and Policy RST output | Generated traffic entering the NPB and reset frames returning to TRex |
-| `NetPro-HTTP` | NPB HTTP output → Policy HTTP NIC (`0b:00.0`) | HTTP GET input, active concurrently with TLS input |
-| `NetPro-TLS` | NPB TLS output → Policy TLS NIC (`13:00.0`) | TLS ClientHello input, active concurrently with HTTP input |
+| `NetPro-HTTP` | NPB HTTP output â†’ Policy HTTP NIC (`0b:00.0`) | HTTP GET input, active concurrently with TLS input |
+| `NetPro-TLS` | NPB TLS output â†’ Policy TLS NIC (`13:00.0`) | TLS ClientHello input, active concurrently with HTTP input |
 | `NetPro-PG-AUX` | Packet Generator port 1 only | Unused second TRex port required by the current two-port TRex configuration |
 
 The management adapter on every VM uses VMware NAT and must not be bound to DPDK.
@@ -65,9 +67,9 @@ The management adapter on every VM uses VMware NAT and must not be bound to DPDK
 ## Dependency and startup order
 
 ```text
-PostgreSQL → Kafka/ZooKeeper → Backend → Frontend
-                         └──→ Policy Server
-Packet Generator → NPB ─────→ Policy Server
+PostgreSQL â†’ Kafka/ZooKeeper â†’ Backend â†’ Frontend
+                         â””â”€â”€â†’ Policy Server
+Packet Generator â†’ NPB â”€â”€â”€â”€â”€â†’ Policy Server
 ```
 
 Recommended full-lab startup order:
@@ -169,7 +171,7 @@ Before leaving laptop A:
 3. Confirm each repository with `git status`.
 4. Commit and push intentional source changes in that component's repository.
 5. Commit and push documentation changes in `NetPro-Documentation`.
-6. Keep VM folders, ISO files, captures, and datasets on the designated local disk or portable SSD—not in Git.
+6. Keep VM folders, ISO files, captures, and datasets on the designated local disk or portable SSDâ€”not in Git.
 7. Eject the portable SSD safely.
 
 On laptop B:
@@ -204,10 +206,10 @@ HTTP and TLS policy enforcement have been verified with the repository traffic p
 The diagram and counts below record the historical two-port sequential tests. They are retained as historical evidence; they do not describe the current port layout.
 
 ```text
-TRex port 0 → NetPro-RX → NPB port 0
-NPB HTTP classification → NPB port 1 → NetPro-HTTP → Policy port 0
-NPB TLS classification  → NPB port 2 → NetPro-TLS  → Policy port 0 (TLS mode)
-Policy port 1 → NetPro-RX → TRex port 0
+TRex port 0 â†’ NetPro-RX â†’ NPB port 0
+NPB HTTP classification â†’ NPB port 1 â†’ NetPro-HTTP â†’ Policy port 0
+NPB TLS classification  â†’ NPB port 2 â†’ NetPro-TLS  â†’ Policy port 0 (TLS mode)
+Policy port 1 â†’ NetPro-RX â†’ TRex port 0
 ```
 
 The HTTP test matched `facebook.co.id` at `48.0.0.1`. The TLS test matched SNI `www.ui.ac.id` at `152.118.24.175:443`. In each test, the NPB classified and forwarded approximately 1,000 requests per active interval; the Policy Server blocked matching requests and emitted client- and server-directed RST frames with zero reported interface errors. The TLS run ended with 8,016 TRex transmissions and 16,032 received RST frames.
