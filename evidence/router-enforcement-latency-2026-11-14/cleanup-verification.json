@@ -1,0 +1,14 @@
+[
+  {
+    "host": "192.168.31.37",
+    "rc": 0,
+    "stdout": "qdisc netem 3901: parent 3900:3 limit 1000 delay 15ms\nRESTORED\n",
+    "stderr": ""
+  },
+  {
+    "host": "192.168.31.39",
+    "rc": 0,
+    "stdout": "HTTP 200 VERSION 3",
+    "stderr": ""
+  }
+]

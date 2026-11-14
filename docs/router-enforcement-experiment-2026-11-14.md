@@ -40,3 +40,7 @@ Two preliminary harness issues were retained in local evidence: the first local 
 - Local raw command records remain in Testing/router-enforcement/evidence. These scripts require verified SSH host keys, NETPRO_LAB_PASSWORD, and this lab's paths/interfaces. Do not use them unchanged on other networks.
 
 The next implementation step is a reviewed controller with authenticated updates, idempotent reconciliation, rule expiry/deletion and measurements of policy propagation. Domain-specific flow enforcement would need additional flow identification and management. No persistent controller was installed in this experiment.
+
+## Allowed traffic timing
+
+A separate 800-request ABBA comparison measured allowed traffic on the same routed topology. See [latency methods and results](router-enforcement-latency-2026-11-14.md).
