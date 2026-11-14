@@ -44,3 +44,7 @@ The next implementation step is a reviewed controller with authenticated updates
 ## Allowed traffic timing
 
 A separate 800-request ABBA comparison measured allowed traffic on the same routed topology. See [latency methods and results](router-enforcement-latency-2026-11-14.md).
+
+## Automatic reconciliation and shared IP follow-up
+
+Three automatic add/delete cycles succeeded; two names on the same IP were both blocked. This confirms collateral blocking rather than selective-domain enforcement. See [methods, timing and limitations](automatic-router-controller-2026-11-14.md).

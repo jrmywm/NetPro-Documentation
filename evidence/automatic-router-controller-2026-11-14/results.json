@@ -1,0 +1,1020 @@
+{
+  "probes": [
+    {
+      "phase": "cycle-1-before",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-before",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-before",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-before",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-before",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-before",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-before",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-before",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-before",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-before",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-before",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-before",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-deny",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-1-deny",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-1-deny",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-1-deny",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-1-deny",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-1-deny",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-1-deny",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "collateral": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-1-deny",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "collateral": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-1-deny",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "collateral": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-1-deny",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "collateral": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-1-deny",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "collateral": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-1-deny",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "collateral": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-1-after",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-after",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-after",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-after",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-after",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-after",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-after",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-after",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-after",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-after",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-after",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-1-after",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-before",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-before",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-before",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-before",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-before",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-before",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-before",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-before",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-before",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-before",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-before",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-before",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-deny",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-2-deny",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-2-deny",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-2-deny",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-2-deny",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-2-deny",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-2-deny",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "collateral": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-2-deny",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "collateral": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-2-deny",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "collateral": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-2-deny",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "collateral": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-2-deny",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "collateral": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-2-deny",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "collateral": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-2-after",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-after",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-after",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-after",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-after",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-after",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-after",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-after",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-after",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-after",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-after",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-2-after",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-before",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-before",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-before",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-before",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-before",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-before",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-before",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-before",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-before",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-before",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-before",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-before",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-deny",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-3-deny",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-3-deny",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-3-deny",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-3-deny",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-3-deny",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-3-deny",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "collateral": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-3-deny",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "collateral": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-3-deny",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "collateral": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-3-deny",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "collateral": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-3-deny",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "collateral": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-3-deny",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "collateral": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "cycle-3-after",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-after",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-after",
+      "hostname": "mysite.local",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-after",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-after",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-after",
+      "hostname": "mysite.local",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-after",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-after",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-after",
+      "hostname": "allowed-router.test",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-after",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-after",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "cycle-3-after",
+      "hostname": "allowed-router.test",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "collateral": false,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    }
+  ],
+  "origin_requests": {
+    "cycle-1-before": 12,
+    "cycle-1-deny": 12,
+    "cycle-1-after": 24,
+    "cycle-2-before": 36,
+    "cycle-2-deny": 36,
+    "cycle-2-after": 48,
+    "cycle-3-before": 60,
+    "cycle-3-deny": 60,
+    "cycle-3-after": 72
+  },
+  "cleanup_errors": [],
+  "propagation": [
+    {
+      "cycle": 1,
+      "action": "create",
+      "seconds": 0.40499329999875044
+    },
+    {
+      "cycle": 1,
+      "action": "delete",
+      "seconds": 0.32022710000455845
+    },
+    {
+      "cycle": 2,
+      "action": "create",
+      "seconds": 0.3014693999939482
+    },
+    {
+      "cycle": 2,
+      "action": "delete",
+      "seconds": 0.5419527999983984
+    },
+    {
+      "cycle": 3,
+      "action": "create",
+      "seconds": 0.27624400000058813
+    },
+    {
+      "cycle": 3,
+      "action": "delete",
+      "seconds": 0.40470909999567084
+    }
+  ]
+}

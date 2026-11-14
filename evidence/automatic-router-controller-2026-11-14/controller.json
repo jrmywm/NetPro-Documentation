@@ -1,0 +1,46 @@
+{
+  "events": [
+    {
+      "time_utc": 1794660424.3995008,
+      "blocked": false,
+      "policy_ids": []
+    },
+    {
+      "time_utc": 1794660425.878945,
+      "blocked": true,
+      "policy_ids": [
+        "1f303f46-6cdb-47bf-baa9-128746413154"
+      ]
+    },
+    {
+      "time_utc": 1794660450.7965772,
+      "blocked": false,
+      "policy_ids": []
+    },
+    {
+      "time_utc": 1794660453.4184697,
+      "blocked": true,
+      "policy_ids": [
+        "98b2f1e9-9a8a-45a4-b2c9-d60991598990"
+      ]
+    },
+    {
+      "time_utc": 1794660478.5920885,
+      "blocked": false,
+      "policy_ids": []
+    },
+    {
+      "time_utc": 1794660481.323767,
+      "blocked": true,
+      "policy_ids": [
+        "00f3d5fd-7a24-4865-b815-3f22390eb42b"
+      ]
+    },
+    {
+      "time_utc": 1794660506.2434762,
+      "blocked": false,
+      "policy_ids": []
+    }
+  ],
+  "error": null
+}
