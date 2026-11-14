@@ -54,3 +54,7 @@ The lab snapshot retains the original directory relationship between Implementat
 ## Next step
 
 Prepare the consolidated operator guide and independent-user demonstration, then run a combined CSV-to-enforcement regression. Continue measuring injected-close reliability; retain the early escaped request and keep the 15 ms timing condition explicit.
+
+## Separate router enforcement experiment
+
+Temporary gateway enforcement passed 30/30 transit HTTP/3/TLS checks with zero additional origin requests during deny and no added response delay. It was cleaned up; the persistent injection-based deployment remains unchanged. This is dedicated-IP enforcement with explicit reconciliation, not an always-running selective-domain controller. See [methods and limitations](router-enforcement-experiment-2026-11-14.md).
