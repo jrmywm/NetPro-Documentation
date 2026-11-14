@@ -1,0 +1,10 @@
+{
+  "host": "192.168.31.33",
+  "remote_build_directory": "/home/netpro/incoming/chromium-reassembly-npb.udREex",
+  "candidate_binary_sha256": "977736f0989f396a9401c8fe3e487271bf1f978dc778c10b1d88e590b9bae46f",
+  "sources": {
+    "packetBroker.c": "b471e5f8f0474d3bf85c8485da95c110e345bfe50748e452997d013824ccc957",
+    "quic_classifier.h": "82056cefee0df10894bd69f201679c24a9c7beefca9fce41b79aecf100c06752",
+    "tls_record_tracker.h": "e52d75d29585f3e2339fdfa4df4291254ec7dcc164ecb743898eaaba579d7112"
+  }
+}

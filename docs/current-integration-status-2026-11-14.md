@@ -1,4 +1,4 @@
-# Current NetPro integration status — 14 November 2026
+# Current NetPro integration status â€” 14 November 2026
 
 This is the current operating record. Earlier setup documents describe historical topologies and remain for traceability.
 
@@ -22,14 +22,16 @@ Dashboard: https://192.168.31.35:3005/ . The old separate Kafka, Frontend and Pa
 - Bintang: actual Policy Server events reach Net-SNMP and Zabbix. Missing per-domain/reporting portions are reconstructed and labelled in code and output.
 - Ibrahim: recovered QUIC Initial inspection and injected CONNECTION_CLOSE are combined with HTTP/TLS in the persistent prototype. Lab results rely on an explicit scoped 15 ms server-response delay; they are not delay-free deployment evidence.
 
-Persistent services are netpro-policy, netpro-npb and netpro-quic-lab.service. Browser reassembly/zero-SCID fixes remain a separately tested candidate and are not permanently deployed.
+Persistent services are netpro-policy, netpro-npb and netpro-quic-lab.service. Browser reassembly/zero-SCID fixes are now permanently deployed through guarded 96-browser-quic.conf overrides on Policy Server and NPB. Both builds survived the six-VM graceful reboot. See [deployment verification](browser-quic-persistent-deployment-2026-11-14.md).
 
 ## Latest verification
 
 On 14 November all six VMs were started from powered off. All six were reachable. Management services and protected API behavior passed, policy publication had no pending events, and cache synchronization was ready with zero errors or shadow mismatches. Both TAP mirror counters increased and fresh blocked-domain monitoring events arrived.
 
-- Live curl allow–deny–allow: **18/18 passed**, covering forced HTTP/3, TLS and fallback-enabled curl.
-- Chromium/curl suite: **14/15 passed**. Forced HTTP/3 Chromium loaded the page during deny. TCP/TLS and normal-mode browser probes blocked. The browser candidate previously passed 15/15 in its temporary deployment on 7 November.
+- Live curl allowâ€“denyâ€“allow: **18/18 passed**, covering forced HTTP/3, TLS and fallback-enabled curl.
+- Initial startup Chromium/curl suite: **14/15 passed**, identifying the old build's Chromium HTTP/3 gap.
+- Browser candidate repeated tests: **29/30**, then **30/30**. One early curl HTTP/3 escape is retained; its exact cause was not captured.
+- After persistent promotion and all six VM reboots: browser/curl suite **30/30** and separate curl HTTP/3/TLS/fallback suite **18/18**. The browser fix is deployed; injected-close timing dependence remains an explicit limitation.
 - Temporary rules were removed and original API/SQLite IDs restored. Three legacy SQLite-only policies remain preserved.
 - No fresh bulk CSV import, interactive dashboard workflow, or stress benchmark was run on 14 November.
 
@@ -51,4 +53,4 @@ The lab snapshot retains the original directory relationship between Implementat
 
 ## Next step
 
-Review and promote the browser reassembly/zero-SCID candidate only after repeated acceptance and rollback checks, then repeat startup verification. Keep the 15 ms timing condition explicit in results.
+Prepare the consolidated operator guide and independent-user demonstration, then run a combined CSV-to-enforcement regression. Continue measuring injected-close reliability; retain the early escaped request and keep the 15 ms timing condition explicit.

@@ -1,0 +1,28 @@
+{
+  "state": "accepted",
+  "created_utc": "20261114T095842Z",
+  "hosts": [
+    {
+      "host": "192.168.31.31",
+      "unit": "netpro-policy",
+      "root": "/var/lib/netpro-browser-deployment/20261114T095842Z",
+      "binary": "/usr/local/libexec/netpro-policy-browser-quic",
+      "dropin": "/etc/systemd/system/netpro-policy.service.d/96-browser-quic.conf",
+      "timer": "netpro-policy-browser-quic-rollback",
+      "sha256": "132c7650d01400a6726a359c06994963b8636893930d417e394cc86028016f1d",
+      "previous_sha256": "cdc47721b017357569ebfc04f9e69b3f2f15f58bf60b3347aed7a9ae74b63e6f",
+      "config_sha256": "2bf39e3d8e5c5ebc5b532157f2969fe224d2a2085b0f0d9e3d55a79ac132cc8e"
+    },
+    {
+      "host": "192.168.31.33",
+      "unit": "netpro-npb",
+      "root": "/var/lib/netpro-browser-deployment/20261114T095842Z",
+      "binary": "/usr/local/libexec/netpro-npb-browser-quic",
+      "dropin": "/etc/systemd/system/netpro-npb.service.d/96-browser-quic.conf",
+      "timer": "netpro-npb-browser-quic-rollback",
+      "sha256": "977736f0989f396a9401c8fe3e487271bf1f978dc778c10b1d88e590b9bae46f",
+      "previous_sha256": "034e97f0818ffa77f80a8cbf61714b911949fe30937a437871af5a2c6707e1bb",
+      "config_sha256": "77ba66c33bbda21198d0f1be56a2346d3df1c40808b371b64fdc6d46a931c252"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "host": "192.168.31.35",
+    "before": "6e3c49d6-99ca-4cca-adb6-2caa969b7024",
+    "after": "ba6ab405-7be4-4398-8294-1799fc4f497a",
+    "passed": true
+  },
+  {
+    "host": "192.168.31.31",
+    "before": "8b57f1b1-94e1-415d-be29-cf2dfa881535",
+    "after": "6e549be2-62a2-4fb1-964d-51eaeb9b4e20",
+    "passed": true
+  },
+  {
+    "host": "192.168.31.33",
+    "before": "0ffda2da-80d8-4849-af8d-90319ac2b1b5",
+    "after": "0ac3d328-9726-4a63-92e2-e81762a74afd",
+    "passed": true
+  },
+  {
+    "host": "192.168.31.37",
+    "before": "5d936e2a-48c5-4bb5-9a35-3e8b228d4c7d",
+    "after": "ed66423f-bd3a-4339-b093-447f9b2ae0b5",
+    "passed": true
+  },
+  {
+    "host": "192.168.31.38",
+    "before": "9b42370e-c25a-4bb4-9074-681bbf10d5f6",
+    "after": "04e13c5d-b156-4534-bb0d-1f3889d9b7d4",
+    "passed": true
+  },
+  {
+    "host": "192.168.31.39",
+    "before": "c9b722fa-e480-4854-9561-a8cfccc0f50f",
+    "after": "9215d60b-9e2d-4db1-a367-64b21f7d99d9",
+    "passed": true
+  }
+]

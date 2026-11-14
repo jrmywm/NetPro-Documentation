@@ -1,0 +1,38 @@
+[
+  {
+    "ip": 31,
+    "rc": 0,
+    "stdout": "policy-server-vm\nup 3 minutes\nactive\n{\"mode\":\"rafie\",\"shadowMismatches\":0,\"policySyncReady\":true,\"initialHighwater\":6282,\"lastOffset\":6285,\"lookup\":{\"enabled\":true,\"filterValid\":true,\"capacity\":20000,\"queries\":6874,\"hotHits\":6830,\"lruHits\":41,\"bloomNegatives\":3,\"sqliteQueries\":0,\"falsePositives\":0,\"rebuilds\":5,\"invalidations\":2093,\"errors\":0,\"evictions\":0,\"loadedRows\":4,\"counterSaturations\":0}\n}\nExecStart={ path=/usr/local/libexec/netpro-policy-browser-quic ; argv[]=/usr/local/libexec/netpro-policy-browser-quic -l 0-3 -n 2 ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }\n",
+    "stderr": ""
+  },
+  {
+    "ip": 33,
+    "rc": 0,
+    "stdout": "npb-vm\nup 3 minutes\nactive\nExecStart={ path=/usr/local/libexec/netpro-npb-browser-quic ; argv[]=/usr/local/libexec/netpro-npb-browser-quic -l 0-3 -n 2 ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }\n",
+    "stderr": ""
+  },
+  {
+    "ip": 35,
+    "rc": 0,
+    "stdout": "backend-vm\nup 4 minutes\nactive\nactive\nactive\nactive\nactive\nactive\n",
+    "stderr": ""
+  },
+  {
+    "ip": 37,
+    "rc": 0,
+    "stdout": "netpro-test-gateway\nup 4 minutes\nactive\nqdisc prio 3900: root refcnt 2 bands 3 priomap 1 2 2 2 1 2 0 0 1 1 1 1 1 1 1 1\nqdisc netem 3901: parent 3900:3 limit 1000 delay 15ms\nlo               UNKNOWN        127.0.0.1/8 \nens33            UP             192.168.31.37/24 \nens37            UP             192.168.80.28/24 \nudp   UNCONN 0      0      192.168.80.28:443       0.0.0.0:*          \ntcp   LISTEN 0      4096   192.168.80.28:443       0.0.0.0:*          \n",
+    "stderr": ""
+  },
+  {
+    "ip": 38,
+    "rc": 0,
+    "stdout": "netpro-virtual-tap\nup 4 minutes\nlo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> \nens33            UP             00:0c:29:da:93:08 <BROADCAST,MULTICAST,UP,LOWER_UP> \nens34            UP             00:0c:29:da:93:12 <BROADCAST,MULTICAST,UP,LOWER_UP> \nens35            UP             00:0c:29:da:93:1c <BROADCAST,MULTICAST,UP,LOWER_UP> \nens36            UP             00:0c:29:da:93:26 <BROADCAST,MULTICAST,UP,LOWER_UP> \nbr-tap           UP             96:6f:07:4b:bf:b5 <BROADCAST,MULTICAST,UP,LOWER_UP> \n3: ens34: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master br-tap state forwarding priority 32 cost 5 \n4: ens35: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 master br-tap state forwarding priority 32 cost 5 \nfilter protocol all pref 100 matchall chain 0 \nfilter protocol all pref 100 matchall chain 0 handle 0x64 \n  not_in_hw (rule hit 7439)\n\taction order 1: mirred (Egress Mirror to device ens36) pipe\n\tindex 1 ref 1 bind 1 installed 234 sec used 38 sec firstused 231 sec\n\tAction statistics:\n\tSent 8624544 bytes 7471 pkt (dropped 0, overlimits 0 requeues 0) \n\tbacklog 0b 0p requeues 0\n\nfilter protocol all pref 100 matchall chain 0 \nfilter protocol all pref 100 matchall chain 0 handle 0x64 \n  not_in_hw (rule hit 40957)\n\taction order 1: mirred (Egress Mirror to device ens36) pipe\n\tindex 2 ref 1 bind 1 installed 234 sec used 38 sec firstused 234 sec\n\tAction statistics:\n\tSent 29376059 bytes 40957 pkt (dropped 0, overlimits 0 requeues 0) \n\tbacklog 0b 0p requeues 0\n\n",
+    "stderr": ""
+  },
+  {
+    "ip": 39,
+    "rc": 0,
+    "stdout": "netpro-test-client\nup 4 minutes\nlo               UNKNOWN        127.0.0.1/8 \nens33            UP             192.168.31.39/24 \nens37            UP             192.168.80.29/24 \ndefault via 192.168.31.2 dev ens33 proto static \n192.168.31.0/24 dev ens33 proto kernel scope link src 192.168.31.39 \n192.168.80.0/24 dev ens37 proto kernel scope link src 192.168.80.29 \ncurl 8.13.0-DEV (x86_64-pc-linux-gnu) libcurl/8.13.0-DEV GnuTLS/3.8.3 zlib/1.3 libidn2/2.3.7 nghttp2/1.59.0 ngtcp2/1.12.0 nghttp3/1.8.0\nRelease-Date: [unreleased]\n",
+    "stderr": ""
+  }
+]

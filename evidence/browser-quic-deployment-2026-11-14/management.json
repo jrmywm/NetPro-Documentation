@@ -1,0 +1,20 @@
+[
+  {
+    "label": "management",
+    "rc": 0,
+    "stdout": "{\"passed\": true, \"services\": {\"netpro-backend\": \"active\", \"postgresql\": \"active\", \"netpro-kafka\": \"active\", \"nginx\": \"active\"}, \"http\": {\"/dashboard/imports\": 200, \"/api/npb/npbs\": 200, \"/api/ps/csv-imports\": 401}, \"frontendRoot\": \"/var/www/netpro-frontend-csv-final-20261030T161236Z\", \"serviceTokenAbsentFromFrontend\": true, \"baselinePolicies\": 1, \"pendingEvents\": 0}\n",
+    "stderr": ""
+  },
+  {
+    "label": "monitoring-config",
+    "rc": 0,
+    "stdout": "  netpro-snmptrapd.service loaded active running NetPro thesis Net-SNMP trap receiver for Zabbix\n  snmpd.service            loaded active running Simple Network Management Protocol (SNMP) Daemon.\n  zabbix-server.service    loaded active running Zabbix Server\nUNCONN 0      0      192.168.31.35:162       0.0.0.0:*    users:((\"snmptrapd\",pid=920,fd=7))       \n",
+    "stderr": ""
+  },
+  {
+    "label": "policy-schema",
+    "rc": 0,
+    "stdout": "Domain indices: [('sqlite_autoindex_policies_1', None), ('idx_policies_domain', 'CREATE INDEX idx_policies_domain ON policies(domain)')]\nPolicy rows: 4\n",
+    "stderr": ""
+  }
+]

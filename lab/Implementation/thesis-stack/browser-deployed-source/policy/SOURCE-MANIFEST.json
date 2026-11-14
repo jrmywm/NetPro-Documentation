@@ -1,0 +1,21 @@
+{
+  "host": "192.168.31.31",
+  "remote_build_directory": "/home/netpro/incoming/chromium-reassembly.aMTJMc",
+  "candidate_binary_sha256": "132c7650d01400a6726a359c06994963b8636893930d417e394cc86028016f1d",
+  "sources": {
+    "gate.c": "ddbf580dfa579764a09c2024d38ee1a3d0cc8e4af1361177947af7ba9a53bde7",
+    "packet-processor.c": "89eb10c202807aaf8fd1a3ef79d897f8b2a78fe48f2eb4a34cf30511f991df57",
+    "policyServer.c": "7999b0149a260a5d03bcb206d439bc04cfafbcc4441a44b74e42a346bf111f32",
+    "quicFunctions.c": "a29b2434c44dba97a3f9b427f4202a04baadf83fe4e1a20d8d47346871a2b533",
+    "quicFunctions.h": "f191bdcbc798d59cf7c7b9a96baaaf8ec6daa68b9bd9ecb49edbe89d71335bf8",
+    "quic_initial_reassembly.h": "a794213116c179c864155d51fd39d7c42b6e72bed9478483554b49e96f023d51",
+    "rafie_lookup.c": "bef11b30ae5e690c0b87da683e8acda15eb4580835a250e51b798f497df5be70",
+    "rafie_lookup.h": "8c890a14696578485c0f1a3d123b7dbd3ccda38ded61fda4453a0aa66a65d9a7",
+    "snmp_reporter.c": "bf08d85ca36fd02484a2eb12a99854640fcb9fd91e331affca5a23aa00bd3ccd",
+    "snmp_reporter.h": "3833436d2f291e152edb6c9a9e32363cd7cec0170439f65efb33f1204d81aded",
+    "thesis_dataplane.c": "7d3caf3ffc251ee308905ee2be98e18877e2f49cc71fd75bcb60ed04f19bdbd6",
+    "thesis_dataplane.h": "f3a8c58b9cb08f2f9786589f00e0df59fb4af13c1b8e5ec8f0dee009717a6d7a",
+    "thesis_monitoring.c": "db52b789e94ee0a4d931ef037eb869dc275199b7a8d00555c49efaf199fe2d6a",
+    "thesis_monitoring.h": "71a03cf1de0ae381ecb63e00e962fa9874605b77e1cdb448b9c3ed4dc1bee295"
+  }
+}

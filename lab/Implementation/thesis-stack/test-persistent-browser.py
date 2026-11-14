@@ -20,7 +20,11 @@ w = ab.ActiveBaseline(os.environ['NETPRO_LAB_PASSWORD'], OUT, Path.home()/'.ssh/
 CL, GW = '192.168.31.39', '192.168.31.37'
 results = []
 rollouts = []
+capture_path = None
+capture_pid = None
 build = os.getenv("NETPRO_BROWSER_BUILD")
+repeats = int(os.getenv("NETPRO_BROWSER_REPEATS", "1"))
+if not 1 <= repeats <= 10: raise ValueError("Repeats must be between 1 and 10")
 
 def command(host, label, shell):
     return w.command(host, label, shell, timeout=25)[1].strip()
@@ -74,14 +78,14 @@ def capture_navigation(options, profile, label):
     finally:
         if ws:ws.close()
 
-def probe(phase, mode):
-    label = phase+'-'+mode
+def probe(phase, mode, trial=1):
+    label = phase+'-'+mode+'-'+str(trial)
     remote_log = remote_dir+'/'+label+'.json'
     options = [
         '--headless','--disable-background-networking','--no-proxy-server',
         '--host-resolver-rules=MAP mysite.local 192.168.80.28',
         '--ignore-certificate-errors-spki-list='+pin,
-        '--user-data-dir='+remote_dir+'/'+mode,
+        '--user-data-dir='+remote_dir+'/'+label+'-profile',
         '--log-net-log='+remote_log,
     ]
     if mode=='h3':options.append('--origin-to-force-quic-on=mysite.local:443')
@@ -115,27 +119,28 @@ def probe(phase, mode):
         passed=not loaded and (closes>0 if mode=='h3' else resets>0)
     else:
         passed=loaded and rc==0 and (completed>0 if mode=='h3' else bool(tcp or quic))
-    row=dict(phase=phase,mode=mode,passed=passed,loaded=loaded,exit=rc,quic_sessions=len(quic),
+    row=dict(phase=phase,mode=mode,trial=trial,passed=passed,loaded=loaded,exit=rc,quic_sessions=len(quic),
              tcp_connections=len(tcp),tls_resets=resets,peer_closes=closes,quic_handshakes=completed)
     results.append(row)
     print(json.dumps(row),flush=True)
 
-def curl_probe(phase, mode):
+def curl_probe(phase, mode, trial=1):
     option='--http3-only' if mode=='h3' else '--http1.1'
     shell=("/home/netpro/netpro-thesis/http3/prefix/bin/curl "+option+
            " --noproxy '*' --interface 192.168.80.29 --resolve mysite.local:443:192.168.80.28"+
            " -k --max-time 5 -sS -o /dev/null -w 'HTTP %{http_code} VERSION %{http_version}\\n'"+
            " https://mysite.local/; rc=$?; echo CURL_EXIT=$rc")
-    output=command(CL,phase+'-curl-'+mode,shell)
+    output=command(CL,phase+'-curl-'+mode+'-'+str(trial),shell)
     rc=int(output.split('CURL_EXIT=')[-1].strip())
-    passed=(rc!=0 and 'HTTP 000' in output) if phase=='deny' else (rc==0 and 'HTTP 200' in output)
-    row=dict(phase=phase,mode='curl-'+mode,passed=passed,output=output)
+    passed=(rc in (28,35,56) and 'HTTP 000' in output) if phase=='deny' else (rc==0 and 'HTTP 200' in output and ('VERSION 3' in output if mode=='h3' else 'VERSION 1.1' in output))
+    row=dict(phase=phase,mode='curl-'+mode,trial=trial,passed=passed,output=output)
     results.append(row)
     print(json.dumps(row),flush=True)
 
 def run_phase(phase):
-    for mode in ('h3','tcp','normal'):probe(phase,mode)
-    for mode in ('h3','tcp'):curl_probe(phase,mode)
+    for trial in range(1,repeats+1):
+        for mode in ('h3','tcp','normal'):probe(phase,mode,trial)
+        for mode in ('h3','tcp'):curl_probe(phase,mode,trial)
 
 try:
     w.connect_all()
@@ -164,6 +169,10 @@ openssl s_client -connect 192.168.80.28:443 -servername mysite.local </dev/null 
 """)
     assert len(pin)==44
     remote_dir=command(CL,'browser-profile-dir','mkdir -p ~/snap/chromium/common && mktemp -d ~/snap/chromium/common/netpro-browser.XXXXXX')
+    if os.getenv('NETPRO_BROWSER_CAPTURE')=='1':
+        capture_path='/tmp/netpro-browser-'+remote_dir.rsplit('/',1)[-1]+'.pcap'
+        _,output,_=w.command(CL,'capture-start',"nohup timeout 600 tcpdump -U --immediate-mode -ni ens37 -s0 -w "+shlex.quote(capture_path)+" 'host 192.168.80.28 and port 443' >"+shlex.quote(capture_path+'.stderr')+" 2>&1 </dev/null & echo $!",sudo=True)
+        capture_pid=int(output.strip())
     run_phase('before')
     if not all(x['passed'] for x in results):raise RuntimeError('Browser baseline incomplete')
     w.create_policy()
@@ -177,6 +186,11 @@ finally:
     try:
         if w.policy_id:w.delete_policy_exactly()
     finally:
+        if capture_pid:
+            try:
+                w.command(CL,'capture-stop',"test -e /proc/"+str(capture_pid)+"/cmdline && grep -zqF "+shlex.quote(capture_path)+" /proc/"+str(capture_pid)+"/cmdline && kill -INT "+str(capture_pid)+"; sleep 1",sudo=True)
+                with w.clients[CL].open_sftp() as ftp:ftp.get(capture_path,str(OUT/'client.pcap'))
+            except Exception as error:print('CAPTURE',str(error),flush=True)
         for rollout in reversed(rollouts):
             rollout.stop()
         (OUT/'browser-results.json').write_text(json.dumps(results,indent=2),encoding='utf-8')
