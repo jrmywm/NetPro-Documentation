@@ -1,0 +1,220 @@
+{
+  "probes": [
+    {
+      "phase": "before",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "before",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "before",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "before",
+      "mode": "h3",
+      "trial": 4,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "before",
+      "mode": "h3",
+      "trial": 5,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "before",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "before",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "before",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "before",
+      "mode": "tls",
+      "trial": 4,
+      "passed": true,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "before",
+      "mode": "tls",
+      "trial": 5,
+      "passed": true,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "deny",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "deny",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "deny",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "deny",
+      "mode": "h3",
+      "trial": 4,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "deny",
+      "mode": "h3",
+      "trial": 5,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "deny",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "deny",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "deny",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "deny",
+      "mode": "tls",
+      "trial": 4,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "deny",
+      "mode": "tls",
+      "trial": 5,
+      "passed": true,
+      "output": "HTTP 000 VERSION 0\nCURL_EXIT=28\n"
+    },
+    {
+      "phase": "after",
+      "mode": "h3",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "after",
+      "mode": "h3",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "after",
+      "mode": "h3",
+      "trial": 3,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "after",
+      "mode": "h3",
+      "trial": 4,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "after",
+      "mode": "h3",
+      "trial": 5,
+      "passed": true,
+      "output": "HTTP 200 VERSION 3\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "after",
+      "mode": "tls",
+      "trial": 1,
+      "passed": true,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "after",
+      "mode": "tls",
+      "trial": 2,
+      "passed": true,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "after",
+      "mode": "tls",
+      "trial": 3,
+      "passed": true,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "after",
+      "mode": "tls",
+      "trial": 4,
+      "passed": true,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    },
+    {
+      "phase": "after",
+      "mode": "tls",
+      "trial": 5,
+      "passed": true,
+      "output": "HTTP 200 VERSION 1.1\nCURL_EXIT=0\n"
+    }
+  ],
+  "origin_requests": {
+    "before": 10,
+    "deny": 10,
+    "after": 20
+  },
+  "cleanup_errors": []
+}
